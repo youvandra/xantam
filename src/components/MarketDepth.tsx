@@ -3,7 +3,7 @@ import React from 'react';
 export default function MarketDepth() {
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm h-full flex flex-col items-center justify-center min-h-[300px]">
-      <h3 className="text-sm font-medium text-gray-500 mb-8">Market Depth - IDRX / XNTM</h3>
+      <h3 className="text-sm font-medium text-gray-500 mb-8">Market Depth - IDRX / EMASX</h3>
       
       {/* Simple CSS Bar Chart Mock */}
       <div className="relative w-full max-w-xs h-40 flex items-end justify-center gap-1">

@@ -30,8 +30,8 @@ export default function Loans() {
               </div>
               <div className="flex justify-between items-center gap-4">
                 <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
-                  <div className="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-white text-xs">X</div>
-                  <span className="font-semibold text-gray-900">XNTM</span>
+                  <div className="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-white text-xs">E</div>
+                  <span className="font-semibold text-gray-900">EMASX</span>
                 </div>
                 <input 
                   type="text" 
@@ -54,7 +54,7 @@ export default function Loans() {
                     </button>
                   ))}
                 </div>
-                <span className="text-sm text-gray-400">~XNTM 0.00</span>
+                <span className="text-sm text-gray-400">~EMASX 0.00</span>
               </div>
             </div>
 

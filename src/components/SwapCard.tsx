@@ -11,7 +11,7 @@ export default function SwapCard() {
   
   // Token state
   const [tokenIn, setTokenIn] = useState({ symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' });
-  const [tokenOut, setTokenOut] = useState({ symbol: 'XNTM', color: 'bg-yellow-400', letter: 'X' });
+  const [tokenOut, setTokenOut] = useState({ symbol: 'EMASX', color: 'bg-yellow-400', letter: 'E' });
 
   const handleSwapTokens = () => {
     const tempToken = tokenIn;
@@ -147,7 +147,7 @@ export default function SwapCard() {
             </div>
             <span className="text-gray-400">→</span>
             <div className="flex items-center gap-1 text-gray-900 font-medium">
-              <span>1 XNTM</span>
+              <span>1 EMASX</span>
               <div className="w-4 h-4 rounded-full bg-yellow-400"></div>
             </div>
           </div>
@@ -162,7 +162,7 @@ export default function SwapCard() {
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-gray-500">Avg. Price:</span>
-              <span className="font-medium">5,379.28156 IDRX/XNTM</span>
+              <span className="font-medium">5,379.28156 IDRX/EMASX</span>
             </div>
           </div>
         </div>
@@ -189,7 +189,7 @@ export default function SwapCard() {
           </p>
           <div className="flex justify-between text-xs mt-3 pt-3 border-t border-gray-100">
              <span className="text-gray-500">Market Price:</span>
-             <span className="font-medium">5,392.76346 IDRX/XNTM</span>
+             <span className="font-medium">5,392.76346 IDRX/EMASX</span>
           </div>
         </div>
       </div>

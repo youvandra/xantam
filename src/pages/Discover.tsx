@@ -5,15 +5,15 @@ export default function Discover() {
   const [activeTab, setActiveTab] = useState<'market' | 'my-offers'>('market');
 
   const offers = [
-    { id: 1, type: 'Buy', amount: '10 XNTM', price: '5,378.20 IDRX', total: '53,782.00 IDRX', user: '0x12...34ab' },
-    { id: 2, type: 'Sell', amount: '5 XNTM', price: '5,380.50 IDRX', total: '26,902.50 IDRX', user: '0x56...78cd' },
-    { id: 3, type: 'Buy', amount: '2.5 XNTM', price: '5,377.90 IDRX', total: '13,444.75 IDRX', user: '0x90...12ef' },
-    { id: 4, type: 'Sell', amount: '100 XNTM', price: '5,382.00 IDRX', total: '538,200.00 IDRX', user: '0x34...56gh' },
-    { id: 5, type: 'Buy', amount: '0.5 XNTM', price: '5,379.00 IDRX', total: '2,689.50 IDRX', user: '0x78...90ij' },
+    { id: 1, type: 'Buy', amount: '10 EMASX', price: '5,378.20 IDRX', total: '53,782.00 IDRX', user: '0x12...34ab' },
+    { id: 2, type: 'Sell', amount: '5 EMASX', price: '5,380.50 IDRX', total: '26,902.50 IDRX', user: '0x56...78cd' },
+    { id: 3, type: 'Buy', amount: '2.5 EMASX', price: '5,377.90 IDRX', total: '13,444.75 IDRX', user: '0x90...12ef' },
+    { id: 4, type: 'Sell', amount: '100 EMASX', price: '5,382.00 IDRX', total: '538,200.00 IDRX', user: '0x34...56gh' },
+    { id: 5, type: 'Buy', amount: '0.5 EMASX', price: '5,379.00 IDRX', total: '2,689.50 IDRX', user: '0x78...90ij' },
   ];
 
   const myOffers = [
-    { id: 101, type: 'Buy', amount: '15 XNTM', price: '5,370.00 IDRX', total: '80,550.00 IDRX', status: 'Open' },
+    { id: 101, type: 'Buy', amount: '15 EMASX', price: '5,370.00 IDRX', total: '80,550.00 IDRX', status: 'Open' },
   ];
 
   return (
@@ -75,7 +75,7 @@ export default function Discover() {
                 <thead className="bg-gray-50/50 border-b border-gray-100">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Type</th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Amount (XNTM)</th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Amount (EMASX)</th>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Price (IDRX)</th>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Total (IDRX)</th>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">User</th>
@@ -122,7 +122,7 @@ export default function Discover() {
               <thead className="bg-gray-50/50 border-b border-gray-100">
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Type</th>
-                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Amount (XNTM)</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Amount (EMASX)</th>
                   <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Price (IDRX)</th>
                   <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Total (IDRX)</th>
                   <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Status</th>

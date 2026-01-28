@@ -44,7 +44,7 @@ export default function Header() {
     <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100 relative z-50">
       <div className="flex items-center gap-8">
         <Link to="/" className="text-2xl font-bold text-primary flex items-center gap-2">
-          <span>XANTAM</span>
+          <span>EMASX</span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-6">
@@ -65,6 +65,12 @@ export default function Header() {
             className={`font-medium ${isActive('/discover') ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
           >
             Discover
+          </Link>
+          <Link 
+            to="/claim" 
+            className={`font-medium ${isActive('/claim') ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+          >
+            Claim
           </Link>
         </nav>
       </div>
