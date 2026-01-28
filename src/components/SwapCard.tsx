@@ -7,14 +7,14 @@ export default function SwapCard() {
   // Live price calculation based on: (XAU/USD * USD/IDR) / 31.1035
   // We use PAXG (Paxos Gold) as proxy for XAU and USDT (Tether) as proxy for USD
   const [exchangeRate, setExchangeRate] = useState(2922500); 
-  const [amountIn, setAmountIn] = useState((2922500).toLocaleString('en-US')); // 1 EMASX worth of IDRX
-  const [amountOut, setAmountOut] = useState('1');
+  const [amountIn, setAmountIn] = useState('1'); 
+  const [amountOut, setAmountOut] = useState((2922500).toLocaleString('en-US'));
   const [isSwapping, setIsSwapping] = useState(false);
-  const [lastFocused, setLastFocused] = useState<'in'|'out'>('out');
+  const [lastFocused, setLastFocused] = useState<'in'|'out'>('in');
   
   // Token state
-  const [tokenIn, setTokenIn] = useState({ symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' });
-  const [tokenOut, setTokenOut] = useState({ symbol: 'EMASX', color: 'bg-yellow-400', letter: 'E' });
+  const [tokenIn, setTokenIn] = useState({ symbol: 'EMASX', color: 'bg-yellow-400', letter: 'E' });
+  const [tokenOut, setTokenOut] = useState({ symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' });
 
   const formatNumber = (num: number) => {
     return num.toLocaleString('en-US', { maximumFractionDigits: 5 });
