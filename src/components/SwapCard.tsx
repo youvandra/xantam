@@ -11,15 +11,6 @@ export default function SwapCard() {
   return (
     <div className="flex flex-col gap-4">
       <div className="bg-white rounded-2xl p-4 shadow-sm">
-        <div className="flex items-center gap-4 mb-6">
-          <button className="bg-blue-50 text-primary px-4 py-1.5 rounded-full text-sm font-semibold">
-            Swap
-          </button>
-          <button className="text-gray-500 hover:text-gray-900 px-4 py-1.5 rounded-full text-sm font-medium">
-            Limit / OTC
-          </button>
-        </div>
-
         {/* From Section */}
         <div className="bg-gray-50 rounded-xl p-4 mb-2 hover:ring-1 hover:ring-primary/20 transition-all">
           <div className="flex justify-between items-center mb-2">
