@@ -18,11 +18,10 @@ export default function SwapCard() {
             <span className="text-sm text-gray-500">Balance: 5,379.28</span>
           </div>
           <div className="flex justify-between items-center gap-4">
-            <button className="flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 px-3 py-2 rounded-full shadow-sm transition-all group">
+            <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
               <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">I</div>
               <span className="font-semibold text-gray-900">IDRX</span>
-              <ChevronDown size={16} className="text-gray-400 group-hover:text-gray-600" />
-            </button>
+            </div>
             <input 
               type="text" 
               value={amountIn}
@@ -56,11 +55,10 @@ export default function SwapCard() {
             <span className="text-sm text-gray-500 font-medium">To</span>
           </div>
           <div className="flex justify-between items-center gap-4">
-            <button className="flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 px-3 py-2 rounded-full shadow-sm transition-all group">
+            <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
               <div className="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-white text-xs">X</div>
               <span className="font-semibold text-gray-900">XNTM</span>
-              <ChevronDown size={16} className="text-gray-400 group-hover:text-gray-600" />
-            </button>
+            </div>
             <input 
               type="text" 
               value={amountOut}

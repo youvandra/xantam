@@ -33,10 +33,10 @@ export default function Loans() {
                   onChange={(e) => setCollateralAmount(e.target.value)}
                   className="bg-transparent border-none focus:outline-none text-2xl font-bold text-gray-900 w-full"
                 />
-                <button className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm font-medium text-gray-700">
+                <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm font-medium text-gray-700">
                   <div className="w-5 h-5 rounded-full bg-yellow-400"></div>
                   XNTM
-                </button>
+                </div>
               </div>
               <div className="flex justify-between text-xs text-gray-500 mt-2 px-1">
                 <span>Balance: 0.00 XNTM</span>
@@ -54,10 +54,10 @@ export default function Loans() {
                   onChange={(e) => setBorrowAmount(e.target.value)}
                   className="bg-transparent border-none focus:outline-none text-2xl font-bold text-gray-900 w-full"
                 />
-                <button className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm font-medium text-gray-700">
+                <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm font-medium text-gray-700">
                   <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs">I</div>
                   IDRX
-                </button>
+                </div>
               </div>
             </div>
 
