@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { ArrowUpDown, Info, Settings, ChevronDown } from 'lucide-react';
+import { useWallet } from '../hooks/useWallet';
 
 export default function SwapCard() {
+  const { account, connect } = useWallet();
   const [amountIn, setAmountIn] = useState('5379.28');
   const [amountOut, setAmountOut] = useState('1');
   const [isSwapping, setIsSwapping] = useState(false);
@@ -153,9 +155,21 @@ export default function SwapCard() {
         </div>
       </div>
 
-      <button className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.01] active:scale-[0.99]">
-        Connect wallet
-      </button>
+      {!account ? (
+        <button 
+          onClick={connect}
+          className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.01] active:scale-[0.99]"
+        >
+          Connect wallet
+        </button>
+      ) : (
+        <button 
+          onClick={() => setIsSwapping(!isSwapping)}
+          className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.01] active:scale-[0.99]"
+        >
+          {isSwapping ? 'Swapping...' : 'Swap'}
+        </button>
+      )}
     </div>
   );
 }
