@@ -67,7 +67,7 @@ export default function SwapCard() {
         <div className="flex justify-center -my-3 relative z-10">
           <button 
             onClick={handleSwapTokens}
-            className="bg-white border border-gray-100 p-2 rounded-lg shadow-sm text-gray-500 hover:text-primary hover:border-primary transition-all active:scale-95 transform"
+            className="bg-white border border-gray-100 p-2 rounded-lg shadow-sm text-gray-500 hover:text-primary hover:border-primary transition-all active:scale-95 transform cursor-pointer"
           >
             <ArrowUpDown size={16} />
           </button>

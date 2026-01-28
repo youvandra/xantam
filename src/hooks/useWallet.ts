@@ -137,12 +137,20 @@ export function useWallet() {
     }
   };
 
+  const disconnect = useCallback(() => {
+    setAccount(null);
+    setChainId(null);
+    // Note: We can't actually disconnect from MetaMask programmatically, 
+    // but we can clear the local state to simulate disconnection in the UI
+  }, []);
+
   return {
     account,
     chainId,
     isConnecting,
     error,
     connect,
+    disconnect,
     switchNetwork,
     BASE_MAINNET_ID,
     BASE_TESTNET_ID

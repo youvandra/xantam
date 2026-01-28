@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Wallet, ChevronDown, Globe, Check, AlertCircle } from 'lucide-react';
+import { Wallet, ChevronDown, Globe, Check, AlertCircle, LogOut } from 'lucide-react';
 import { useWallet, BASE_MAINNET_ID, BASE_TESTNET_ID } from '../hooks/useWallet';
 
 export default function Header() {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   
-  const { account, chainId, connect, switchNetwork, error, isConnecting } = useWallet();
+  const { account, chainId, connect, disconnect, switchNetwork, error, isConnecting } = useWallet();
   const [isNetworkOpen, setIsNetworkOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -117,9 +117,18 @@ export default function Header() {
         </div>
         
         {account ? (
-          <div className="bg-gray-100 text-gray-900 font-medium px-4 py-2 rounded-full flex items-center gap-2">
-            <Wallet size={16} className="text-gray-500" />
-            <span>{formatAddress(account)}</span>
+          <div className="flex items-center gap-2">
+            <div className="bg-gray-100 text-gray-900 font-medium px-4 py-2 rounded-full flex items-center gap-2">
+              <Wallet size={16} className="text-gray-500" />
+              <span>{formatAddress(account)}</span>
+            </div>
+            <button 
+              onClick={disconnect}
+              className="bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 p-2 rounded-full transition-colors cursor-pointer"
+              title="Disconnect"
+            >
+              <LogOut size={16} />
+            </button>
           </div>
         ) : (
           <button 
