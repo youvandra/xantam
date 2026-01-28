@@ -68,7 +68,7 @@ export default function Claim() {
             <div className="flex items-center justify-between bg-gray-50 rounded-xl p-2">
               <button 
                 onClick={() => updateQuantity(option.weight, -1)}
-                className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer"
                 disabled={!quantities[option.weight]}
               >
                 <Minus size={18} />
@@ -76,7 +76,7 @@ export default function Claim() {
               <span className="font-bold text-lg w-12 text-center">{quantities[option.weight] || 0}</span>
               <button 
                 onClick={() => updateQuantity(option.weight, 1)}
-                className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-primary hover:bg-blue-50 transition-colors"
+                className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-primary hover:bg-blue-50 transition-colors cursor-pointer"
               >
                 <Plus size={18} />
               </button>
