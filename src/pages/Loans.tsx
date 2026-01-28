@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { ShieldCheck, TrendingUp, Info } from 'lucide-react';
+import { useWallet } from '../hooks/useWallet';
 
 export default function Loans() {
+  const { account, connect } = useWallet();
   const [collateralAmount, setCollateralAmount] = useState('');
   const [borrowAmount, setBorrowAmount] = useState('');
 
@@ -74,9 +76,20 @@ export default function Loans() {
               </div>
             </div>
 
-            <button className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all">
-              Connect Wallet to Borrow
-            </button>
+            {!account ? (
+              <button 
+                onClick={connect}
+                className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all"
+              >
+                Connect Wallet to Borrow
+              </button>
+            ) : (
+              <button 
+                className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all"
+              >
+                Borrow IDRX
+              </button>
+            )}
           </div>
         </div>
 
