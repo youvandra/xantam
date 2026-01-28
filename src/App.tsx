@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Trade from './pages/Trade';
 import Loans from './pages/Loans';
-import Discover from './pages/Discover';
 import Claim from './pages/Claim';
 import './App.css';
 
@@ -14,7 +13,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Trade />} />
           <Route path="/loans" element={<Loans />} />
-          <Route path="/discover" element={<Discover />} />
           <Route path="/claim" element={<Claim />} />
         </Routes>
       </Layout>

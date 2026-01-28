@@ -61,12 +61,6 @@ export default function Header() {
             Loans
           </Link>
           <Link 
-            to="/discover" 
-            className={`font-medium ${isActive('/discover') ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
-          >
-            Discover
-          </Link>
-          <Link 
             to="/claim" 
             className={`font-medium ${isActive('/claim') ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
           >

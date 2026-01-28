@@ -119,27 +119,11 @@ export default function SwapCard() {
       {/* Options / Route Info */}
       <div className="bg-white rounded-2xl p-4 shadow-sm">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="font-medium text-gray-900">Options:</h3>
+          <h3 className="font-medium text-gray-900">Summary</h3>
           <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
         </div>
 
-        <div 
-          onClick={() => setSelectedOption('instant')}
-          className={`border rounded-xl p-4 relative overflow-hidden cursor-pointer transition-all ${
-            selectedOption === 'instant' 
-              ? 'border-blue-100 bg-blue-50/30 ring-1 ring-primary/20' 
-              : 'border-gray-100 hover:border-gray-300 bg-white'
-          }`}
-        >
-          {selectedOption === 'instant' && (
-            <div className="absolute top-0 right-0 bg-white/80 px-2 py-1 text-[10px] text-gray-500 rounded-bl-lg border-l border-b border-gray-100">
-              Selected
-            </div>
-          )}
-          <div className="flex justify-between items-start mb-2">
-            <span className="font-medium text-gray-900">Swap instantly</span>
-          </div>
-          
+        <div className="border border-blue-100 bg-blue-50/30 rounded-xl p-4 relative overflow-hidden ring-1 ring-primary/20">
           <div className="flex justify-between items-center mb-3 text-sm">
             <div className="flex items-center gap-1 text-gray-600">
               <div className="w-4 h-4 rounded-full bg-blue-500"></div>
@@ -164,32 +148,14 @@ export default function SwapCard() {
               <span className="text-gray-500">Avg. Price:</span>
               <span className="font-medium">5,379.28156 IDRX/EMASX</span>
             </div>
-          </div>
-        </div>
-
-        <div 
-          onClick={() => setSelectedOption('limit')}
-          className={`mt-3 p-4 rounded-xl border transition-all cursor-pointer group ${
-            selectedOption === 'limit'
-              ? 'border-blue-100 bg-blue-50/30 ring-1 ring-primary/20'
-              : 'border-gray-100 hover:border-gray-300 bg-white'
-          }`}
-        >
-           {selectedOption === 'limit' && (
-            <div className="absolute top-0 right-0 bg-white/80 px-2 py-1 text-[10px] text-gray-500 rounded-bl-lg border-l border-b border-gray-100">
-              Selected
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-500">Price Impact:</span>
+              <span className="font-medium text-green-500">~0.00%</span>
             </div>
-          )}
-           <div className="flex justify-between items-start mb-1">
-            <span className="font-medium text-gray-900">Limit offer</span>
-            <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md group-hover:bg-gray-200">Set your own price</span>
-          </div>
-          <p className="text-xs text-gray-500 leading-relaxed">
-            Get a better price by placing a Limit. Limits are added to the orderbook and can be cancelled at any time.
-          </p>
-          <div className="flex justify-between text-xs mt-3 pt-3 border-t border-gray-100">
-             <span className="text-gray-500">Market Price:</span>
-             <span className="font-medium">5,392.76346 IDRX/EMASX</span>
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-500">Network Fee:</span>
+              <span className="font-medium">~0.0000000000000001 ETH</span>
+            </div>
           </div>
         </div>
       </div>
