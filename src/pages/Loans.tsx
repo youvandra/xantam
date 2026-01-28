@@ -23,12 +23,18 @@ export default function Loans() {
           </h2>
 
           <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Deposit Collateral</label>
-              <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-gray-50 rounded-xl p-4 hover:ring-1 hover:ring-primary/20 transition-all">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-500 font-medium">Deposit Collateral</span>
+                <span className="text-sm text-gray-500">Balance: 0.00</span>
+              </div>
+              <div className="flex justify-between items-center gap-4">
+                <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
+                  <div className="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-white text-xs">X</div>
+                  <span className="font-semibold text-gray-900">XNTM</span>
+                </div>
                 <input 
                   type="text" 
-                  placeholder="0.00" 
                   value={collateralAmount}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -36,25 +42,33 @@ export default function Loans() {
                       setCollateralAmount(val);
                     }
                   }}
-                  className="bg-transparent border-none focus:outline-none text-2xl font-bold text-gray-900 w-full"
+                  className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-900 placeholder-gray-300"
+                  placeholder="0"
                 />
-                <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm font-medium text-gray-700">
-                  <div className="w-5 h-5 rounded-full bg-yellow-400"></div>
-                  XNTM
-                </div>
               </div>
-              <div className="flex justify-between text-xs text-gray-500 mt-2 px-1">
-                <span>Balance: 0.00 XNTM</span>
-                <span className="text-primary cursor-pointer">Max</span>
+              <div className="flex justify-between items-center mt-2">
+                <div className="flex gap-2">
+                  {['0', 'Half', 'Max'].map((label) => (
+                    <button key={label} className="text-xs bg-white border border-gray-200 px-2 py-1 rounded-md text-gray-600 hover:bg-gray-100">
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <span className="text-sm text-gray-400">~XNTM 0.00</span>
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Borrow Amount</label>
-              <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-gray-50 rounded-xl p-4 hover:ring-1 hover:ring-primary/20 transition-all">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-500 font-medium">Borrow Amount</span>
+              </div>
+              <div className="flex justify-between items-center gap-4">
+                <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
+                  <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs">I</div>
+                  <span className="font-semibold text-gray-900">IDRX</span>
+                </div>
                 <input 
                   type="text" 
-                  placeholder="0.00" 
                   value={borrowAmount}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -62,12 +76,12 @@ export default function Loans() {
                       setBorrowAmount(val);
                     }
                   }}
-                  className="bg-transparent border-none focus:outline-none text-2xl font-bold text-gray-900 w-full"
+                  className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-900 placeholder-gray-300"
+                  placeholder="0"
                 />
-                <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm font-medium text-gray-700">
-                  <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs">I</div>
-                  IDRX
-                </div>
+              </div>
+              <div className="flex justify-end mt-2">
+                <span className="text-sm text-gray-400">~IDRX 0.00</span>
               </div>
             </div>
 
