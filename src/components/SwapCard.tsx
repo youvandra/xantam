@@ -7,6 +7,21 @@ export default function SwapCard() {
   const [amountIn, setAmountIn] = useState('5379.28');
   const [amountOut, setAmountOut] = useState('1');
   const [isSwapping, setIsSwapping] = useState(false);
+  
+  // Token state
+  const [tokenIn, setTokenIn] = useState({ symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' });
+  const [tokenOut, setTokenOut] = useState({ symbol: 'XNTM', color: 'bg-yellow-400', letter: 'X' });
+
+  const handleSwapTokens = () => {
+    const tempToken = tokenIn;
+    setTokenIn(tokenOut);
+    setTokenOut(tempToken);
+    
+    // Also swap amounts
+    const tempAmount = amountIn;
+    setAmountIn(amountOut);
+    setAmountOut(tempAmount);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -19,8 +34,8 @@ export default function SwapCard() {
           </div>
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
-              <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">I</div>
-              <span className="font-semibold text-gray-900">IDRX</span>
+              <div className={`w-6 h-6 rounded-full ${tokenIn.color} flex items-center justify-center text-white text-xs`}>{tokenIn.letter}</div>
+              <span className="font-semibold text-gray-900">{tokenIn.symbol}</span>
             </div>
             <input 
               type="text" 
@@ -38,13 +53,16 @@ export default function SwapCard() {
                 </button>
               ))}
             </div>
-            <span className="text-sm text-gray-400">~IDRX 5,377</span>
+            <span className="text-sm text-gray-400">~{tokenIn.symbol} 5,377</span>
           </div>
         </div>
 
         {/* Swap Arrow */}
         <div className="flex justify-center -my-3 relative z-10">
-          <button className="bg-white border border-gray-100 p-2 rounded-lg shadow-sm text-gray-500 hover:text-primary hover:border-primary transition-all">
+          <button 
+            onClick={handleSwapTokens}
+            className="bg-white border border-gray-100 p-2 rounded-lg shadow-sm text-gray-500 hover:text-primary hover:border-primary transition-all active:scale-95 transform"
+          >
             <ArrowUpDown size={16} />
           </button>
         </div>
@@ -56,8 +74,8 @@ export default function SwapCard() {
           </div>
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
-              <div className="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-white text-xs">X</div>
-              <span className="font-semibold text-gray-900">XNTM</span>
+              <div className={`w-6 h-6 rounded-full ${tokenOut.color} flex items-center justify-center text-white text-xs`}>{tokenOut.letter}</div>
+              <span className="font-semibold text-gray-900">{tokenOut.symbol}</span>
             </div>
             <input 
               type="text" 
