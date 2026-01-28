@@ -1,26 +1,138 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowUpDown, Info, Settings, ChevronDown, RefreshCw } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 
 export default function SwapCard() {
   const { account, connect } = useWallet();
-  const [amountIn, setAmountIn] = useState('5379.28');
+  // Live price calculation based on: (XAU/USD * USD/IDR) / 31.1035
+  // We use PAXG (Paxos Gold) as proxy for XAU and USDT (Tether) as proxy for USD
+  const [exchangeRate, setExchangeRate] = useState(2922500); 
+  const [amountIn, setAmountIn] = useState((2922500).toLocaleString('en-US')); // 1 EMASX worth of IDRX
   const [amountOut, setAmountOut] = useState('1');
   const [isSwapping, setIsSwapping] = useState(false);
+  const [lastFocused, setLastFocused] = useState<'in'|'out'>('out');
   
   // Token state
   const [tokenIn, setTokenIn] = useState({ symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' });
   const [tokenOut, setTokenOut] = useState({ symbol: 'EMASX', color: 'bg-yellow-400', letter: 'E' });
+
+  const formatNumber = (num: number) => {
+    return num.toLocaleString('en-US', { maximumFractionDigits: 5 });
+  };
+
+  // Fetch live price
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        // Fetch PAXG (Gold) in USD and Tether (USD) in IDR
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold,tether&vs_currencies=usd,idr');
+        const data = await response.json();
+        
+        if (data['pax-gold']?.usd && data['tether']?.idr) {
+          const xauUsd = data['pax-gold'].usd;
+          const usdIdr = data['tether'].idr;
+          
+          // Formula: (XAUUSD * USDIDR) / 31.1035
+          const pricePerGram = Math.floor((xauUsd * usdIdr) / 31.1035);
+          
+          console.log(`Live Price Update: XAU/USD=${xauUsd}, USD/IDR=${usdIdr}, Rate=${pricePerGram}`);
+          setExchangeRate(pricePerGram);
+        }
+      } catch (error) {
+        console.error("Failed to fetch live price:", error);
+      }
+    };
+
+    fetchPrice();
+    // Refresh every minute
+    const interval = setInterval(fetchPrice, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Recalculate amounts when exchange rate updates
+  useEffect(() => {
+    const rawIn = Number(amountIn.replace(/,/g, ''));
+    const rawOut = Number(amountOut.replace(/,/g, ''));
+    
+    if (lastFocused === 'out' && !isNaN(rawOut) && rawOut !== 0) {
+       const calculated = tokenIn.symbol === 'IDRX'
+         ? rawOut * exchangeRate
+         : rawOut / exchangeRate;
+       setAmountIn(formatNumber(calculated));
+    } else if (lastFocused === 'in' && !isNaN(rawIn) && rawIn !== 0) {
+       const calculated = tokenIn.symbol === 'IDRX' 
+         ? rawIn / exchangeRate 
+         : rawIn * exchangeRate;
+       setAmountOut(formatNumber(calculated));
+    }
+  }, [exchangeRate, tokenIn.symbol]);
+
+  const handleAmountInChange = (val: string) => {
+    if (val === '' || /^\d*\.?\d*$/.test(val)) {
+      setAmountIn(val);
+      setLastFocused('in');
+      if (val && !isNaN(Number(val))) {
+        const rawVal = Number(val.replace(/,/g, ''));
+        // If selling IDRX for EMASX: amountIn (IDRX) / rate = amountOut (EMASX)
+        // If selling EMASX for IDRX: amountIn (EMASX) * rate = amountOut (IDRX)
+        const calculated = tokenIn.symbol === 'IDRX' 
+          ? rawVal / exchangeRate 
+          : rawVal * exchangeRate;
+        setAmountOut(formatNumber(calculated));
+      } else {
+        setAmountOut('');
+      }
+    }
+  };
+
+  const handleAmountOutChange = (val: string) => {
+    if (val === '' || /^\d*\.?\d*$/.test(val)) {
+      setAmountOut(val);
+      setLastFocused('out');
+      if (val && !isNaN(Number(val))) {
+        const rawVal = Number(val.replace(/,/g, ''));
+        // If buying EMASX with IDRX: amountOut (EMASX) * rate = amountIn (IDRX)
+        // If buying IDRX with EMASX: amountOut (IDRX) / rate = amountIn (EMASX)
+        const calculated = tokenIn.symbol === 'IDRX'
+          ? rawVal * exchangeRate
+          : rawVal / exchangeRate;
+        setAmountIn(formatNumber(calculated));
+      } else {
+        setAmountIn('');
+      }
+    }
+  };
 
   const handleSwapTokens = () => {
     const tempToken = tokenIn;
     setTokenIn(tokenOut);
     setTokenOut(tempToken);
     
-    // Also swap amounts
-    const tempAmount = amountIn;
-    setAmountIn(amountOut);
-    setAmountOut(tempAmount);
+    // Recalculate based on new direction
+    const rawAmountIn = Number(amountIn.replace(/,/g, ''));
+    if (!isNaN(rawAmountIn)) {
+       // Just swap the inputs visually or keep values? 
+       // Standard DEX behavior: keep "From" amount, recalculate "To"
+       // But here we might want to just swap the tokens and recalculate `amountOut` based on `amountIn`
+       
+       // If we were IDRX -> EMASX (In -> Out)
+       // Now EMASX -> IDRX
+       // The `amountIn` is now EMASX. 
+       // We should probably keep the numeric value of `amountIn` if it was the last edited?
+       // Let's just trigger a recalculation based on `amountIn`
+       
+       // Actually simpler: just swap the values?
+       // If I had 2.9M IDRX -> 1 EMASX
+       // Swap -> 2.9M EMASX -> 8.4T IDRX? 
+       // Or 1 EMASX -> 2.9M IDRX?
+       
+       // Let's just recalculate amountOut based on amountIn with new rate logic
+       const newOut = tempToken.symbol === 'EMASX' // New IN is EMASX
+         ? rawAmountIn * exchangeRate
+         : rawAmountIn / exchangeRate;
+         
+       setAmountOut(formatNumber(newOut));
+    }
   };
 
   return (
@@ -30,7 +142,7 @@ export default function SwapCard() {
         <div className="bg-gray-50 rounded-xl p-4 mb-2 hover:ring-1 hover:ring-primary/20 transition-all">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-gray-500 font-medium">From</span>
-            <span className="text-sm text-gray-500">Balance: 5,379.28</span>
+            <span className="text-sm text-gray-500">Balance: 150,000,000</span>
           </div>
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
@@ -40,12 +152,7 @@ export default function SwapCard() {
             <input 
               type="text" 
               value={amountIn}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '' || /^\d*\.?\d*$/.test(val)) {
-                  setAmountIn(val);
-                }
-              }}
+              onChange={(e) => handleAmountInChange(e.target.value)}
               className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-900 placeholder-gray-300"
               placeholder="0"
             />
@@ -58,7 +165,9 @@ export default function SwapCard() {
                 </button>
               ))}
             </div>
-            <span className="text-sm text-gray-400">~{tokenIn.symbol} 5,377</span>
+            <span className="text-sm text-gray-400">
+              {/* Placeholder for USD value or similar */}
+            </span>
           </div>
         </div>
 
@@ -85,18 +194,13 @@ export default function SwapCard() {
             <input 
               type="text" 
               value={amountOut}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '' || /^\d*\.?\d*$/.test(val)) {
-                  setAmountOut(val);
-                }
-              }}
+              onChange={(e) => handleAmountOutChange(e.target.value)}
               className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-900 placeholder-gray-300"
               placeholder="0"
             />
           </div>
           <div className="flex justify-end mt-2">
-            <span className="text-sm text-gray-400">~IDRX 5,391</span>
+             {/* Placeholder */}
           </div>
         </div>
 
@@ -109,7 +213,7 @@ export default function SwapCard() {
             <ArrowUpDown size={12} className="text-gray-400" />
           </div>
           <div className="flex items-center gap-2 font-medium">
-            <span>5,379.28</span>
+            <span>{formatNumber(exchangeRate)}</span>
             <span className="text-gray-500 text-sm">{tokenIn.symbol}</span>
           </div>
         </div>
@@ -125,11 +229,11 @@ export default function SwapCard() {
           <div className="flex justify-between items-center mb-3 text-sm">
             <div className="flex items-center gap-1 text-gray-600">
               <div className="w-4 h-4 rounded-full bg-blue-500"></div>
-              <span>5,379.28 IDRX</span>
+              <span>{amountIn || '0'} {tokenIn.symbol}</span>
             </div>
             <span className="text-gray-400">→</span>
             <div className="flex items-center gap-1 text-gray-900 font-medium">
-              <span>1 EMASX</span>
+              <span>{amountOut || '0'} {tokenOut.symbol}</span>
               <div className="w-4 h-4 rounded-full bg-yellow-400"></div>
             </div>
           </div>
@@ -137,7 +241,7 @@ export default function SwapCard() {
           <div className="space-y-2 pt-3 border-t border-gray-200/50">
             <div className="flex justify-between text-xs">
               <span className="text-gray-500">Avg. Price:</span>
-              <span className="font-medium">5,379.28156 IDRX/EMASX</span>
+              <span className="font-medium">{formatNumber(exchangeRate)} {tokenIn.symbol}/{tokenOut.symbol}</span>
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-gray-500">Price Impact:</span>
