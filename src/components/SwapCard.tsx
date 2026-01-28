@@ -138,13 +138,6 @@ export default function SwapCard() {
 
           <div className="space-y-2 pt-3 border-t border-gray-200/50">
             <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Offers to take:</span>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">1</span>
-                <span className="text-primary cursor-pointer hover:underline">View Offers</span>
-              </div>
-            </div>
-            <div className="flex justify-between text-xs">
               <span className="text-gray-500">Avg. Price:</span>
               <span className="font-medium">5,379.28156 IDRX/EMASX</span>
             </div>
@@ -153,8 +146,8 @@ export default function SwapCard() {
               <span className="font-medium text-green-500">~0.00%</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Network Fee:</span>
-              <span className="font-medium">~0.0000000000000001 ETH</span>
+              <span className="text-gray-500">Fee:</span>
+              <span className="font-medium">~2,000 IDRX</span>
             </div>
           </div>
         </div>
