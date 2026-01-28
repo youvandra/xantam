@@ -119,7 +119,6 @@ export default function SwapCard() {
       <div className="bg-white rounded-2xl p-4 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-medium text-gray-900">Summary</h3>
-          <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
         </div>
 
         <div className="border border-blue-100 bg-blue-50/30 rounded-xl p-4 relative overflow-hidden ring-1 ring-primary/20">
