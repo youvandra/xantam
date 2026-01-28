@@ -16,6 +16,13 @@ export default function SwapCard() {
   const [tokenIn, setTokenIn] = useState({ symbol: 'EMASX', color: 'bg-yellow-400', letter: 'E' });
   const [tokenOut, setTokenOut] = useState({ symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' });
 
+  // Mock balances
+  const balances: Record<string, number> = {
+    'IDRX': 150000000,
+    'EMASX': 100
+  };
+  const currentBalance = balances[tokenIn.symbol] || 0;
+
   const formatNumber = (num: number) => {
     return num.toLocaleString('en-US', { maximumFractionDigits: 5 });
   };
@@ -111,21 +118,6 @@ export default function SwapCard() {
     // Recalculate based on new direction
     const rawAmountIn = Number(amountIn.replace(/,/g, ''));
     if (!isNaN(rawAmountIn)) {
-       // Just swap the inputs visually or keep values? 
-       // Standard DEX behavior: keep "From" amount, recalculate "To"
-       // But here we might want to just swap the tokens and recalculate `amountOut` based on `amountIn`
-       
-       // If we were IDRX -> EMASX (In -> Out)
-       // Now EMASX -> IDRX
-       // The `amountIn` is now EMASX. 
-       // We should probably keep the numeric value of `amountIn` if it was the last edited?
-       // Let's just trigger a recalculation based on `amountIn`
-       
-       // Actually simpler: just swap the values?
-       // If I had 2.9M IDRX -> 1 EMASX
-       // Swap -> 2.9M EMASX -> 8.4T IDRX? 
-       // Or 1 EMASX -> 2.9M IDRX?
-       
        // Let's just recalculate amountOut based on amountIn with new rate logic
        const newOut = tempToken.symbol === 'EMASX' // New IN is EMASX
          ? rawAmountIn * exchangeRate
@@ -135,6 +127,18 @@ export default function SwapCard() {
     }
   };
 
+  const handleQuickAmount = (type: string) => {
+    let newAmount = '';
+    if (type === '0') {
+      newAmount = '0';
+    } else if (type === 'Half') {
+      newAmount = (currentBalance / 2).toString();
+    } else if (type === 'Max') {
+      newAmount = currentBalance.toString();
+    }
+    handleAmountInChange(newAmount);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="bg-white rounded-2xl p-4 shadow-sm">
@@ -142,7 +146,7 @@ export default function SwapCard() {
         <div className="bg-gray-50 rounded-xl p-4 mb-2 hover:ring-1 hover:ring-primary/20 transition-all">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-gray-500 font-medium">From</span>
-            <span className="text-sm text-gray-500">Balance: 150,000,000</span>
+            <span className="text-sm text-gray-500">Balance: {currentBalance.toLocaleString('en-US')}</span>
           </div>
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
@@ -160,7 +164,11 @@ export default function SwapCard() {
           <div className="flex justify-between items-center mt-2">
             <div className="flex gap-2">
               {['0', 'Half', 'Max'].map((label) => (
-                <button key={label} className="text-xs bg-white border border-gray-200 px-2 py-1 rounded-md text-gray-600 hover:bg-gray-100">
+                <button 
+                  key={label} 
+                  onClick={() => handleQuickAmount(label)}
+                  className="text-xs bg-white border border-gray-200 px-2 py-1 rounded-md text-gray-600 hover:bg-gray-100"
+                >
                   {label}
                 </button>
               ))}
