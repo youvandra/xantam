@@ -95,13 +95,13 @@ export default function SwapCard() {
         <div className="mt-4 p-3 rounded-lg border border-gray-100 flex justify-between items-center">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span>Price per</span>
-            <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-white text-[10px]">I</div>
-            <span>1 IDRX</span>
+            <div className={`w-4 h-4 rounded-full ${tokenOut.color} flex items-center justify-center text-white text-[10px]`}>{tokenOut.letter}</div>
+            <span>1 {tokenOut.symbol}</span>
             <ArrowUpDown size={12} className="text-gray-400" />
           </div>
           <div className="flex items-center gap-2 font-medium">
-            <span>0.000185</span>
-            <span className="text-gray-500 text-sm">XNTM</span>
+            <span>5,379.28</span>
+            <span className="text-gray-500 text-sm">{tokenIn.symbol}</span>
           </div>
         </div>
       </div>
