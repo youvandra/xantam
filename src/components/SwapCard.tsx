@@ -7,6 +7,7 @@ export default function SwapCard() {
   const [amountIn, setAmountIn] = useState('5379.28');
   const [amountOut, setAmountOut] = useState('1');
   const [isSwapping, setIsSwapping] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<'instant' | 'limit'>('instant');
   
   // Token state
   const [tokenIn, setTokenIn] = useState({ symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' });
@@ -112,10 +113,19 @@ export default function SwapCard() {
           <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
         </div>
 
-        <div className="border border-blue-100 bg-blue-50/30 rounded-xl p-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 bg-white/80 px-2 py-1 text-[10px] text-gray-500 rounded-bl-lg border-l border-b border-gray-100">
-            Executes Instantly
-          </div>
+        <div 
+          onClick={() => setSelectedOption('instant')}
+          className={`border rounded-xl p-4 relative overflow-hidden cursor-pointer transition-all ${
+            selectedOption === 'instant' 
+              ? 'border-blue-100 bg-blue-50/30 ring-1 ring-primary/20' 
+              : 'border-gray-100 hover:border-gray-300 bg-white'
+          }`}
+        >
+          {selectedOption === 'instant' && (
+            <div className="absolute top-0 right-0 bg-white/80 px-2 py-1 text-[10px] text-gray-500 rounded-bl-lg border-l border-b border-gray-100">
+              Selected
+            </div>
+          )}
           <div className="flex justify-between items-start mb-2">
             <span className="font-medium text-gray-900">Swap instantly</span>
           </div>
@@ -147,7 +157,19 @@ export default function SwapCard() {
           </div>
         </div>
 
-        <div className="mt-3 p-4 rounded-xl border border-gray-100 hover:border-gray-300 transition-colors cursor-pointer group">
+        <div 
+          onClick={() => setSelectedOption('limit')}
+          className={`mt-3 p-4 rounded-xl border transition-all cursor-pointer group ${
+            selectedOption === 'limit'
+              ? 'border-blue-100 bg-blue-50/30 ring-1 ring-primary/20'
+              : 'border-gray-100 hover:border-gray-300 bg-white'
+          }`}
+        >
+           {selectedOption === 'limit' && (
+            <div className="absolute top-0 right-0 bg-white/80 px-2 py-1 text-[10px] text-gray-500 rounded-bl-lg border-l border-b border-gray-100">
+              Selected
+            </div>
+          )}
            <div className="flex justify-between items-start mb-1">
             <span className="font-medium text-gray-900">Limit offer</span>
             <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md group-hover:bg-gray-200">Set your own price</span>
