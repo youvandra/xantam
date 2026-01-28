@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUpDown, Info, Settings, ChevronDown } from 'lucide-react';
+import { ArrowUpDown, Info, Settings, ChevronDown, RefreshCw } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 
 export default function SwapCard() {
@@ -163,9 +163,19 @@ export default function SwapCard() {
       ) : (
         <button 
           onClick={() => setIsSwapping(!isSwapping)}
-          className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.01] active:scale-[0.99]"
+          className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
         >
-          {isSwapping ? 'Swapping...' : 'Swap'}
+          {isSwapping ? (
+            <>
+              <RefreshCw className="w-5 h-5 animate-spin" />
+              Swapping...
+            </>
+          ) : (
+            <>
+              <RefreshCw className="w-5 h-5" />
+              Swap
+            </>
+          )}
         </button>
       )}
     </div>

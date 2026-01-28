@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, TrendingUp, Info } from 'lucide-react';
+import { ShieldCheck, TrendingUp, Info, HandCoins } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 
 export default function Loans() {
@@ -109,8 +109,9 @@ export default function Loans() {
               </button>
             ) : (
               <button 
-                className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all"
+                className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
               >
+                <HandCoins className="w-5 h-5" />
                 Borrow IDRX
               </button>
             )}
