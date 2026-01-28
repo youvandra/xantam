@@ -1,11 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldCheck, TrendingUp, Info, HandCoins } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
+import Skeleton from '../components/Skeleton';
 
 export default function Loans() {
   const { account, connect } = useWallet();
   const [collateralAmount, setCollateralAmount] = useState('');
   const [borrowAmount, setBorrowAmount] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8 text-center">
+          <Skeleton className="h-10 w-64 mx-auto mb-2" />
+          <Skeleton className="h-6 w-96 mx-auto" />
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <Skeleton className="h-[500px] w-full rounded-2xl" />
+          <Skeleton className="h-[400px] w-full rounded-2xl" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto">

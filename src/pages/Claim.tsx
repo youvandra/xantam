@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Package, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
+import Skeleton from '../components/Skeleton';
 
 interface GoldOption {
   weight: number;
@@ -20,6 +21,14 @@ const GOLD_OPTIONS: GoldOption[] = [
 export default function Claim() {
   const { account, connect } = useWallet();
   const [quantities, setQuantities] = useState<Record<number, number>>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const updateQuantity = (weight: number, delta: number) => {
     setQuantities(prev => {
@@ -34,6 +43,23 @@ export default function Claim() {
   }, 0);
 
   const totalEMASX = totalWeight; // Assuming 1g = 1 EMASX for simplicity, or 1 EMASX = 1g? usually EMASX is 1g tokenized gold.
+
+  if (isLoading) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8 text-center">
+          <Skeleton className="h-10 w-64 mx-auto mb-2" />
+          <Skeleton className="h-6 w-96 mx-auto" />
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="h-[400px] w-full rounded-2xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto">
