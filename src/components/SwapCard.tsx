@@ -41,7 +41,12 @@ export default function SwapCard() {
             <input 
               type="text" 
               value={amountIn}
-              onChange={(e) => setAmountIn(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                  setAmountIn(val);
+                }
+              }}
               className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-900 placeholder-gray-300"
               placeholder="0"
             />
@@ -81,7 +86,12 @@ export default function SwapCard() {
             <input 
               type="text" 
               value={amountOut}
-              onChange={(e) => setAmountOut(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                  setAmountOut(val);
+                }
+              }}
               className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-900 placeholder-gray-300"
               placeholder="0"
             />
