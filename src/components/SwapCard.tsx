@@ -7,7 +7,6 @@ export default function SwapCard() {
   const [amountIn, setAmountIn] = useState('5379.28');
   const [amountOut, setAmountOut] = useState('1');
   const [isSwapping, setIsSwapping] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<'instant' | 'limit'>('instant');
   
   // Token state
   const [tokenIn, setTokenIn] = useState({ symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' });
