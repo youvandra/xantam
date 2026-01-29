@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUpDown, Info, Settings, ChevronDown, RefreshCw } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
+import EmasxIcon from '../assets/EMASX.svg';
+import IdrxIcon from '../assets/IDRX.svg';
 
 export default function SwapCard() {
   const { account, connect } = useWallet();
@@ -187,11 +189,15 @@ export default function SwapCard() {
             <span className="text-sm text-gray-500">Balance: {currentBalance.toLocaleString('en-US')}</span>
           </div>
           <div className="flex justify-between items-center gap-4">
-            <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
-              <div className={`w-6 h-6 rounded-full ${tokenIn.color} flex items-center justify-center text-white text-xs`}>{tokenIn.letter}</div>
+            <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm min-w-fit">
+              <img 
+                src={tokenIn.symbol === 'EMASX' ? EmasxIcon : IdrxIcon} 
+                alt={tokenIn.symbol} 
+                className="w-6 h-6 rounded-full shrink-0"
+              />
               <span className="font-semibold text-gray-900">{tokenIn.symbol}</span>
             </div>
-            <input 
+            <input  
               type="text" 
               value={amountIn}
               onChange={(e) => handleAmountInChange(e.target.value)}
@@ -233,11 +239,15 @@ export default function SwapCard() {
             <span className="text-sm text-gray-500 font-medium">To</span>
           </div>
           <div className="flex justify-between items-center gap-4">
-            <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
-              <div className={`w-6 h-6 rounded-full ${tokenOut.color} flex items-center justify-center text-white text-xs`}>{tokenOut.letter}</div>
+            <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm min-w-fit">
+              <img 
+                src={tokenOut.symbol === 'EMASX' ? EmasxIcon : IdrxIcon} 
+                alt={tokenOut.symbol} 
+                className="w-6 h-6 rounded-full shrink-0"
+              />
               <span className="font-semibold text-gray-900">{tokenOut.symbol}</span>
             </div>
-            <input 
+            <input  
               type="text" 
               value={amountOut}
               onChange={(e) => handleAmountOutChange(e.target.value)}
@@ -254,7 +264,11 @@ export default function SwapCard() {
         <div className="mt-4 p-3 rounded-lg border border-gray-100 flex justify-between items-center">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span>Price per</span>
-            <div className={`w-4 h-4 rounded-full ${finalBaseToken.color} flex items-center justify-center text-white text-[10px]`}>{finalBaseToken.letter}</div>
+            <img 
+              src={finalBaseToken.symbol === 'EMASX' ? EmasxIcon : IdrxIcon} 
+              alt={finalBaseToken.symbol} 
+              className="w-4 h-4 rounded-full"
+            />
             <span>1 {finalBaseToken.symbol}</span>
             <ArrowUpDown size={12} className="text-gray-400" />
           </div>
@@ -274,13 +288,21 @@ export default function SwapCard() {
         <div className="border border-blue-100 bg-blue-50/30 rounded-xl p-4 relative overflow-hidden ring-1 ring-primary/20">
           <div className="flex justify-between items-center mb-3 text-sm">
             <div className="flex items-center gap-1 text-gray-600">
-              <div className="w-4 h-4 rounded-full bg-blue-500"></div>
+              <img 
+                src={tokenIn.symbol === 'EMASX' ? EmasxIcon : IdrxIcon} 
+                alt={tokenIn.symbol} 
+                className="w-4 h-4 rounded-full"
+              />
               <span>{amountIn || '0'} {tokenIn.symbol}</span>
             </div>
             <span className="text-gray-400">→</span>
             <div className="flex items-center gap-1 text-gray-900 font-medium">
               <span>{amountOut || '0'} {tokenOut.symbol}</span>
-              <div className="w-4 h-4 rounded-full bg-yellow-400"></div>
+              <img 
+                src={tokenOut.symbol === 'EMASX' ? EmasxIcon : IdrxIcon} 
+                alt={tokenOut.symbol} 
+                className="w-4 h-4 rounded-full"
+              />
             </div>
           </div>
 

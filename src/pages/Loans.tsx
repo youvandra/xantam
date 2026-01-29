@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ShieldCheck, TrendingUp, Info, HandCoins } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 import Skeleton from '../components/Skeleton';
+import EmasxIcon from '../assets/EMASX.svg';
+import IdrxIcon from '../assets/IDRX.svg';
 
 export default function Loans() {
   const { account, connect } = useWallet();
@@ -54,11 +56,11 @@ export default function Loans() {
                 <span className="text-sm text-gray-500">Balance: 0.00</span>
               </div>
               <div className="flex justify-between items-center gap-4">
-                <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
-                  <div className="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-white text-xs">E</div>
+                <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm min-w-fit">
+                  <img src={EmasxIcon} alt="EMASX" className="w-6 h-6 rounded-full shrink-0" />
                   <span className="font-semibold text-gray-900">EMASX</span>
                 </div>
-                <input 
+                <input   
                   type="text" 
                   value={collateralAmount}
                   onChange={(e) => {
@@ -88,11 +90,11 @@ export default function Loans() {
                 <span className="text-sm text-gray-500 font-medium">Borrow Amount</span>
               </div>
               <div className="flex justify-between items-center gap-4">
-                <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm">
-                  <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs">I</div>
+                <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm min-w-fit">
+                  <img src={IdrxIcon} alt="IDRX" className="w-6 h-6 rounded-full shrink-0" />
                   <span className="font-semibold text-gray-900">IDRX</span>
                 </div>
-                <input 
+                <input   
                   type="text" 
                   value={borrowAmount}
                   onChange={(e) => {
