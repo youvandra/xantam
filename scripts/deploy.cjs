@@ -89,12 +89,22 @@ async function main() {
   console.log("Funded Treasury with 100M IDRX");
 
   // 10. Fund Deployer with some EMASX (optional, for testing)
-  // Mint 1000 EMASX to deployer
   // Deployer is admin, can grant itself minter role if needed, but we can use Swap to get EMASX.
   // Or simply grant deployer MINTER_ROLE temporarily.
   await emasx.grantRole(MINTER_ROLE, deployer.address);
-  await emasx.mint(deployer.address, hre.ethers.parseUnits("1000", 18));
-  console.log("Minted 1000 EMASX to deployer");
+
+  if (hre.network.name === "base-sepolia") {
+    // Mint requested amounts for Base Sepolia
+    await idrx.mint(deployer.address, hre.ethers.parseUnits("40000000", 18));
+    console.log("Minted 40,000,000 Mock IDRX to deployer (Base Sepolia)");
+    
+    await emasx.mint(deployer.address, hre.ethers.parseUnits("400", 18));
+    console.log("Minted 400 EMASX to deployer (Base Sepolia)");
+  } else {
+    // Default/Local behavior
+    await emasx.mint(deployer.address, hre.ethers.parseUnits("1000", 18));
+    console.log("Minted 1000 EMASX to deployer");
+  }
 
   // 11. Save addresses and ABI to frontend
   const addresses = {

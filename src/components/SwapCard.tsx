@@ -400,12 +400,8 @@ export default function SwapCard() {
               <span className="font-medium">{formatNumber(exchangeRate)} {tokenIn.symbol}/{tokenOut.symbol}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Price Impact:</span>
-              <span className="font-medium text-green-500">~0.00%</span>
-            </div>
-            <div className="flex justify-between text-xs">
               <span className="text-gray-500">Fee:</span>
-              <span className="font-medium">~2,000 IDRX</span>
+              <span className="font-medium">~5,000 IDRX</span>
             </div>
           </div>
         </div>
