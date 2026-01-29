@@ -5,6 +5,7 @@ import { useContracts } from '../hooks/useContracts';
 import ContractAddresses from '../abis/contract-address.json';
 import { ethers } from 'ethers';
 import Skeleton from '../components/Skeleton';
+import Notification, { type NotificationItem } from '../components/Notification';
 import EmasxIcon from '../assets/EMASX.svg';
 import IdrxIcon from '../assets/IDRX.svg';
 
@@ -15,10 +16,36 @@ export default function Loans() {
   const [borrowAmount, setBorrowAmount] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isTransacting, setIsTransacting] = useState(false);
+  const [notification, setNotification] = useState<NotificationItem | null>(null);
   
   const [userBalance, setUserBalance] = useState({ emasx: '0', idrx: '0' });
   const [userPosition, setUserPosition] = useState({ collateral: '0', debt: '0' });
   const [goldPrice, setGoldPrice] = useState('0');
+
+  // Fetch live price consistent with Trade page
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold,tether&vs_currencies=usd,idr');
+        const data = await response.json();
+        
+        if (data['pax-gold']?.usd && data['tether']?.idr) {
+          const xauUsd = data['pax-gold'].usd;
+          const usdIdr = data['tether'].idr;
+          
+          // Formula: (XAUUSD * USDIDR) / 31.1035
+          const pricePerGram = Math.floor((xauUsd * usdIdr) / 31.1035);
+          setGoldPrice(pricePerGram.toString());
+        }
+      } catch (error) {
+        console.error("Failed to fetch live price:", error);
+      }
+    };
+
+    fetchPrice();
+    const interval = setInterval(fetchPrice, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,9 +57,8 @@ export default function Loans() {
       try {
         const emasx = await contracts.getEMASX();
         const lending = await contracts.getLending();
-        const oracle = await contracts.getOracle();
 
-        if (emasx && lending && oracle) {
+        if (emasx && lending) {
           // Get Balances
           const emasxBal = await emasx.balanceOf(account);
           setUserBalance(prev => ({ ...prev, emasx: ethers.formatEther(emasxBal) }));
@@ -43,13 +69,13 @@ export default function Loans() {
             collateral: ethers.formatEther(pos.collateral),
             debt: ethers.formatEther(pos.debt)
           });
-
-          // Get Gold Price
-          const price = await oracle.getGoldPrice();
-          setGoldPrice(ethers.formatEther(price));
         }
       } catch (err) {
         console.error("Error fetching loan data:", err);
+        setNotification({
+          type: 'error',
+          message: 'Failed to load market data. Please check your connection.'
+        });
       } finally {
         setIsLoading(false);
       }
@@ -176,6 +202,21 @@ export default function Loans() {
                     const val = e.target.value;
                     if (val === '' || /^\d*\.?\d*$/.test(val)) {
                       setCollateralAmount(val);
+                      
+                      // Auto-calculate borrow amount (60% LTV)
+                      if (val && Number(goldPrice) > 0) {
+                        const maxBorrow = Number(val) * Number(goldPrice) * 0.60;
+                        setBorrowAmount(Math.floor(maxBorrow).toString());
+                      } else {
+                        setBorrowAmount('');
+                      }
+
+                      if (Number(goldPrice) === 0) {
+                        setNotification({
+                          type: 'info',
+                          message: 'Gold price is loading or unavailable. Please wait...'
+                        });
+                      }
                     }
                   }}
                   className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-900 placeholder-gray-300"
@@ -190,7 +231,9 @@ export default function Loans() {
                     </button>
                   ))}
                 </div>
-                <span className="text-sm text-gray-400">~EMASX 0.00</span>
+                <span className="text-sm text-gray-400">
+                  ~ {((Number(collateralAmount) || 0) * (Number(goldPrice) || 0)).toLocaleString('id-ID', { maximumFractionDigits: 0 })} IDRX
+                </span>
               </div>
             </div>
 
@@ -205,26 +248,25 @@ export default function Loans() {
                 </div>
                 <input   
                   type="text" 
-                  value={borrowAmount}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (val === '' || /^\d*\.?\d*$/.test(val)) {
-                      setBorrowAmount(val);
-                    }
-                  }}
-                  className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-900 placeholder-gray-300"
+                  readOnly
+                  value={borrowAmount ? Number(borrowAmount).toLocaleString('id-ID') : ''}
+                  className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-500 cursor-not-allowed placeholder-gray-300"
                   placeholder="0"
                 />
               </div>
               <div className="flex justify-end mt-2">
-                <span className="text-sm text-gray-400">~IDRX 0.00</span>
+                <span className="text-sm text-gray-400">
+                  Price: {Number(goldPrice).toLocaleString('id-ID')} IDRX / 1 EMASX
+                </span>
               </div>
             </div>
 
             <div className="bg-blue-50/50 rounded-xl p-4 space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">LTV (Loan to Value)</span>
-                <span className="font-medium text-gray-900">0.00%</span>
+                <span className="font-medium text-gray-900">
+                  {ltv > 0 ? ltv.toFixed(2) : '0.00'}% / 60.00%
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Liquidation Price</span>
@@ -262,7 +304,7 @@ export default function Loans() {
               Safety & Security
             </h3>
             <p className="text-sm text-gray-500 leading-relaxed mb-4">
-              Your collateral is secured in audited smart contracts. Liquidation occurs only if your LTV exceeds the maximum threshold of 80%.
+              Your collateral is secured in audited smart contracts. Liquidation occurs only if your LTV exceeds the maximum threshold of 60%.
             </p>
             <div className="flex items-center gap-2 text-sm text-primary cursor-pointer hover:underline">
               <Info size={16} />
@@ -280,14 +322,6 @@ export default function Loans() {
                <div>
                  <p className="text-gray-400 text-xs mb-1">Total IDRX Borrowed</p>
                  <p className="text-xl font-bold">45.2B</p>
-               </div>
-               <div>
-                 <p className="text-gray-400 text-xs mb-1">Gold Price</p>
-                 <p className="text-xl font-bold text-yellow-400">${Number(goldPrice).toLocaleString()}</p>
-               </div>
-               <div>
-                 <p className="text-gray-400 text-xs mb-1">IDRX Price</p>
-                 <p className="text-xl font-bold text-blue-400">$1.00</p>
                </div>
              </div>
           </div>

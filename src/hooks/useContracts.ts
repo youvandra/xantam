@@ -6,7 +6,7 @@ import EMASX_ABI from '../abis/EMASX.json';
 import EMASXLending_ABI from '../abis/EMASXLending.json';
 import EMASXSwap_ABI from '../abis/EMASXSwap.json';
 import GoldClaimRegistry_ABI from '../abis/GoldClaimRegistry.json';
-import MockGoldOracle_ABI from '../abis/MockGoldOracle.json';
+import GoldPriceOracle_ABI from '../abis/GoldPriceOracle.json';
 import MockIDRX_ABI from '../abis/MockIDRX.json';
 import Treasury_ABI from '../abis/Treasury.json';
 import ContractAddresses from '../abis/contract-address.json';
@@ -50,7 +50,7 @@ export function useContracts() {
     return {
       getMockIDRX: () => getContract('MockIDRX', MockIDRX_ABI),
       getEMASX: () => getContract('EMASX', EMASX_ABI),
-      getOracle: () => getContract('MockGoldOracle', MockGoldOracle_ABI),
+      getOracle: () => getContract('GoldPriceOracle', GoldPriceOracle_ABI),
       getSwap: () => getContract('EMASXSwap', EMASXSwap_ABI),
       getLending: () => getContract('EMASXLending', EMASXLending_ABI),
       getClaim: () => getContract('GoldClaimRegistry', GoldClaimRegistry_ABI),

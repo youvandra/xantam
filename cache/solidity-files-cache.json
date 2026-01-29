@@ -648,6 +648,45 @@
         "GoldClaimRegistry",
         "IEMASX"
       ]
+    },
+    "/Users/youvandrafebrial/Documents/trae_projects/xantam/smart_contract/GoldPriceOracle.sol": {
+      "lastModificationDate": 1769651721246,
+      "contentHash": "769f19d96b703b8db9128894f71462af",
+      "sourceName": "smart_contract/GoldPriceOracle.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/AccessControl.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "AggregatorV3Interface",
+        "GoldPriceOracle"
+      ]
     }
   }
 }

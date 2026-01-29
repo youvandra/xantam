@@ -20,23 +20,15 @@ async function main() {
   const emasxAddress = await emasx.getAddress();
   console.log("EMASX deployed to:", emasxAddress);
 
-  // 3. Deploy MockGoldOracle
-  // Initial price: 2,922,500 IDRX per gram (based on previous calculation)
-  // 1 gram = 1e18 units in contract logic if price is scaled?
-  // Oracle returns uint256. If price is 2,922,500 IDRX (with 18 decimals?)
-  // Usually price is per unit. 
-  // Let's assume price is in IDRX (18 decimals) per gram.
-  // 2,922,500 * 10^18 (if IDRX has 18 decimals)
-  // Wait, IDRX is ERC20 with 18 decimals (default).
-  // Price should be 2,922,500 * 1e18? Or just 2,922,500?
-  // If 1 gram = 1 EMASX (1e18 units), and we want 2,922,500 IDRX (2,922,500 * 1e18 units) per 1 EMASX.
-  // Then price = 2,922,500 * 1e18.
+  // 3. Deploy GoldPriceOracle
+  // Initial price: 2,922,500 IDRX per gram
+  // Price = 2,922,500 * 1e18 (since IDRX has 18 decimals and we want cost per gram unit)
   const initialPrice = hre.ethers.parseUnits("2922500", 18);
-  const MockGoldOracle = await hre.ethers.getContractFactory("MockGoldOracle");
-  const oracle = await MockGoldOracle.deploy(initialPrice);
+  const GoldPriceOracle = await hre.ethers.getContractFactory("GoldPriceOracle");
+  const oracle = await GoldPriceOracle.deploy(initialPrice);
   await oracle.waitForDeployment();
   const oracleAddress = await oracle.getAddress();
-  console.log("MockGoldOracle deployed to:", oracleAddress);
+  console.log("GoldPriceOracle deployed to:", oracleAddress);
 
   // 4. Deploy Treasury
   const Treasury = await hre.ethers.getContractFactory("Treasury");
@@ -108,7 +100,7 @@ async function main() {
   const addresses = {
     MockIDRX: idrxAddress,
     EMASX: emasxAddress,
-    MockGoldOracle: oracleAddress,
+    GoldPriceOracle: oracleAddress,
     Treasury: treasuryAddress,
     EMASXSwap: swapAddress,
     EMASXLending: lendingAddress,
@@ -136,7 +128,7 @@ async function main() {
 
   saveAbi("MockIDRX", idrx);
   saveAbi("EMASX", emasx);
-  saveAbi("MockGoldOracle", oracle);
+  saveAbi("GoldPriceOracle", oracle);
   saveAbi("Treasury", treasury);
   saveAbi("EMASXSwap", swap);
   saveAbi("EMASXLending", lending);
