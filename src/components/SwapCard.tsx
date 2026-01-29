@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpDown, Info, Settings, ChevronDown, RefreshCw } from 'lucide-react';
+import { ArrowUpDown, Info, Settings, ChevronDown, RefreshCw, ArrowLeftRight, Repeat } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 import { useContracts } from '../hooks/useContracts';
 import { ethers } from 'ethers';
@@ -411,27 +411,29 @@ export default function SwapCard() {
         </div>
       </div>
 
+      {/* Swap Button */}
       {!account ? (
         <button 
           onClick={connect}
-          className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.01] active:scale-[0.99]"
+          className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
         >
-          Connect wallet
+          Connect Wallet
         </button>
       ) : (
         <button 
-          onClick={() => setIsSwapping(!isSwapping)}
-          className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+          onClick={handleSwap}
+          disabled={isSwapping}
+          className="w-full bg-primary hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
         >
           {isSwapping ? (
             <>
-              <RefreshCw className="w-5 h-5 animate-spin" />
+              <RefreshCw size={20} className="animate-spin" />
               Swapping...
             </>
           ) : (
             <>
-              <RefreshCw className="w-5 h-5" />
-              Swap
+              <Repeat size={20} />
+              Swap Tokens
             </>
           )}
         </button>

@@ -4,6 +4,7 @@ import { useWallet } from '../hooks/useWallet';
 import { useContracts } from '../hooks/useContracts';
 import { ethers } from 'ethers';
 import Skeleton from '../components/Skeleton';
+import Modal from '../components/Modal';
 
 interface GoldOption {
   weight: number;
@@ -26,6 +27,14 @@ export default function Claim() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isClaiming, setIsClaiming] = useState(false);
+  const [shippingDetails, setShippingDetails] = useState({
+    fullName: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    phone: ''
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -56,6 +65,12 @@ export default function Claim() {
 
     if (totalWeight <= 0) return;
 
+    // Validate shipping details
+    if (!shippingDetails.fullName || !shippingDetails.address || !shippingDetails.phone) {
+      alert("Please fill in all required shipping details.");
+      return;
+    }
+
     setIsClaiming(true);
     try {
       const claimRegistry = await contracts.getClaim();
@@ -78,8 +93,13 @@ export default function Claim() {
       const tx = await claimRegistry.claim(requiredAmount);
       await tx.wait();
 
-      alert(`Successfully claimed ${totalWeight}g of physical gold!`);
+      // Here you would typically submit the shipping details to a backend
+      console.log("Shipping Details:", shippingDetails);
+
+      alert(`Successfully claimed ${totalWeight}g of physical gold! Shipping to: ${shippingDetails.address}`);
       setQuantities({});
+      setShippingDetails({ fullName: '', address: '', city: '', postalCode: '', phone: '' });
+      setIsModalOpen(false);
 
     } catch (err: any) {
       console.error("Claim failed:", err);
@@ -113,7 +133,7 @@ export default function Claim() {
         <p className="text-gray-500">Redeem your EMASX tokens for certified physical gold bars.</p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {GOLD_OPTIONS.map((option) => (
           <div key={option.weight} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
             <div className="aspect-square bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden group">
@@ -156,6 +176,82 @@ export default function Claim() {
         ))}
       </div>
 
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Shipping Details"
+      >
+        <div className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input
+                  type="text"
+                  value={shippingDetails.fullName}
+                  onChange={(e) => setShippingDetails(prev => ({ ...prev, fullName: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <input
+                  type="tel"
+                  value={shippingDetails.phone}
+                  onChange={(e) => setShippingDetails(prev => ({ ...prev, phone: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  placeholder="+62 812 3456 7890"
+                />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Address</label>
+                <textarea
+                  value={shippingDetails.address}
+                  onChange={(e) => setShippingDetails(prev => ({ ...prev, address: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all h-[124px] resize-none"
+                  placeholder="Street address, apartment, suite, etc."
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                <input
+                  type="text"
+                  value={shippingDetails.city}
+                  onChange={(e) => setShippingDetails(prev => ({ ...prev, city: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  placeholder="Jakarta"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
+                <input
+                  type="text"
+                  value={shippingDetails.postalCode}
+                  onChange={(e) => setShippingDetails(prev => ({ ...prev, postalCode: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  placeholder="12345"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-4 border-t border-gray-100">
+            <button
+              onClick={handleClaim}
+              disabled={isClaiming}
+              className="bg-primary hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isClaiming ? 'Processing...' : 'Confirm Claim'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
       {/* Floating Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-40">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-6">
@@ -174,9 +270,9 @@ export default function Claim() {
               </button>
             ) : (
               <button 
-                onClick={handleClaim}
+                onClick={() => setIsModalOpen(true)}
                 disabled={totalWeight === 0 || isClaiming}
-                className="flex-1 md:w-64 bg-primary hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
+                className="flex-1 md:w-64 bg-primary hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Package size={20} />
                 {isClaiming ? 'Claiming...' : `Claim ${totalWeight > 0 ? `${totalWeight}g` : ''} Gold`}

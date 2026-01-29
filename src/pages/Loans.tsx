@@ -281,16 +281,18 @@ export default function Loans() {
             {!account ? (
               <button 
                 onClick={connect}
-                className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all"
+                className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
               >
                 Connect Wallet to Borrow
               </button>
             ) : (
               <button 
-                className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
+                onClick={handleBorrow}
+                disabled={isTransacting}
+                className="w-full bg-primary hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
               >
                 <HandCoins className="w-5 h-5" />
-                Borrow IDRX
+                {isTransacting ? 'Processing...' : 'Borrow IDRX'}
               </button>
             )}
           </div>
