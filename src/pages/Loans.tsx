@@ -1,22 +1,131 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, TrendingUp, Info, HandCoins } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
+import { useContracts } from '../hooks/useContracts';
+import ContractAddresses from '../abis/contract-address.json';
+import { ethers } from 'ethers';
 import Skeleton from '../components/Skeleton';
 import EmasxIcon from '../assets/EMASX.svg';
 import IdrxIcon from '../assets/IDRX.svg';
 
 export default function Loans() {
   const { account, connect } = useWallet();
+  const contracts = useContracts();
   const [collateralAmount, setCollateralAmount] = useState('');
   const [borrowAmount, setBorrowAmount] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isTransacting, setIsTransacting] = useState(false);
+  
+  const [userBalance, setUserBalance] = useState({ emasx: '0', idrx: '0' });
+  const [userPosition, setUserPosition] = useState({ collateral: '0', debt: '0' });
+  const [goldPrice, setGoldPrice] = useState('0');
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+    const fetchData = async () => {
+      if (!contracts || !account) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const emasx = await contracts.getEMASX();
+        const lending = await contracts.getLending();
+        const oracle = await contracts.getOracle();
+
+        if (emasx && lending && oracle) {
+          // Get Balances
+          const emasxBal = await emasx.balanceOf(account);
+          setUserBalance(prev => ({ ...prev, emasx: ethers.formatEther(emasxBal) }));
+
+          // Get Position
+          const pos = await lending.positions(account);
+          setUserPosition({
+            collateral: ethers.formatEther(pos.collateral),
+            debt: ethers.formatEther(pos.debt)
+          });
+
+          // Get Gold Price
+          const price = await oracle.getGoldPrice();
+          setGoldPrice(ethers.formatEther(price));
+        }
+      } catch (err) {
+        console.error("Error fetching loan data:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
+  }, [contracts, account]);
+
+  const handleBorrow = async () => {
+    if (!contracts || !account) {
+      connect();
+      return;
+    }
+
+    setIsTransacting(true);
+    try {
+      const emasx = await contracts.getEMASX();
+      const lending = await contracts.getLending();
+
+      if (!emasx || !lending) throw new Error("Contracts not loaded");
+
+      // 1. Deposit Collateral if amount > 0
+      if (collateralAmount && Number(collateralAmount) > 0) {
+        const amountWei = ethers.parseEther(collateralAmount);
+        
+        // Check Allowance
+        const allowance = await emasx.allowance(account, ContractAddresses.EMASXLending);
+        if (allowance < amountWei) {
+          const txApprove = await emasx.approve(ContractAddresses.EMASXLending, amountWei);
+          await txApprove.wait();
+        }
+
+        const txDeposit = await lending.deposit(amountWei);
+        await txDeposit.wait();
+      }
+
+      // 2. Borrow IDRX if amount > 0
+      if (borrowAmount && Number(borrowAmount) > 0) {
+        const amountWei = ethers.parseEther(borrowAmount);
+        const txBorrow = await lending.borrow(amountWei);
+        await txBorrow.wait();
+      }
+
+      // Reset inputs
+      setCollateralAmount('');
+      setBorrowAmount('');
+      alert("Transaction Successful!");
+      
+      // Refresh data immediately
+      const pos = await lending.positions(account);
+        setUserPosition({
+        collateral: ethers.formatEther(pos.collateral),
+        debt: ethers.formatEther(pos.debt)
+      });
+      const emasxBal = await emasx.balanceOf(account);
+      setUserBalance(prev => ({ ...prev, emasx: ethers.formatEther(emasxBal) }));
+
+    } catch (err: any) {
+      console.error("Borrow failed:", err);
+      alert("Transaction Failed: " + (err.message || err));
+    } finally {
+      setIsTransacting(false);
+    }
+  };
+
+  // Calculate LTV
+  const currentCollateral = Number(userPosition.collateral) + (Number(collateralAmount) || 0);
+  const currentDebt = Number(userPosition.debt) + (Number(borrowAmount) || 0);
+  const collateralValue = currentCollateral * Number(goldPrice);
+  const ltv = collateralValue > 0 ? (currentDebt / collateralValue) * 100 : 0;
+  
+  // Calculate Liquidation Price (when LTV hits 80%)
+  // 80% = Debt / (Collateral * LiqPrice) => LiqPrice = Debt / (Collateral * 0.8)
+  const liquidationPrice = currentCollateral > 0 ? currentDebt / (currentCollateral * 0.8) : 0;
 
   if (isLoading) {
     return (
@@ -174,7 +283,7 @@ export default function Loans() {
                </div>
                <div>
                  <p className="text-gray-400 text-xs mb-1">Gold Price</p>
-                 <p className="text-xl font-bold text-yellow-400">$2,340</p>
+                 <p className="text-xl font-bold text-yellow-400">${Number(goldPrice).toLocaleString()}</p>
                </div>
                <div>
                  <p className="text-gray-400 text-xs mb-1">IDRX Price</p>

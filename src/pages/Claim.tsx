@@ -20,8 +20,10 @@ const GOLD_OPTIONS: GoldOption[] = [
 
 export default function Claim() {
   const { account, connect } = useWallet();
+  const contracts = useContracts();
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isClaiming, setIsClaiming] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -42,7 +44,48 @@ export default function Claim() {
     return sum + (Number(weight) * qty);
   }, 0);
 
-  const totalEMASX = totalWeight; // Assuming 1g = 1 EMASX for simplicity, or 1 EMASX = 1g? usually EMASX is 1g tokenized gold.
+  const totalEMASX = totalWeight; // 1g = 1 EMASX
+
+  const handleClaim = async () => {
+    if (!contracts || !account) {
+      connect();
+      return;
+    }
+
+    if (totalWeight <= 0) return;
+
+    setIsClaiming(true);
+    try {
+      const claimRegistry = await contracts.getClaim();
+      const emasx = await contracts.getEMASX();
+
+      if (!claimRegistry || !emasx) throw new Error("Contracts not loaded");
+
+      // Check balance first
+      const balance = await emasx.balanceOf(account);
+      const requiredAmount = ethers.parseEther(totalWeight.toString());
+      
+      if (balance < requiredAmount) {
+        alert(`Insufficient EMASX balance. You need ${totalWeight} EMASX.`);
+        setIsClaiming(false);
+        return;
+      }
+
+      // Execute Claim
+      // Note: No approval needed as Registry has BURNER_ROLE
+      const tx = await claimRegistry.claim(requiredAmount);
+      await tx.wait();
+
+      alert(`Successfully claimed ${totalWeight}g of physical gold!`);
+      setQuantities({});
+
+    } catch (err: any) {
+      console.error("Claim failed:", err);
+      alert("Claim Failed: " + (err.message || err));
+    } finally {
+      setIsClaiming(false);
+    }
+  };
 
   if (isLoading) {
     return (

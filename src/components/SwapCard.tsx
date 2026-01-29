@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUpDown, Info, Settings, ChevronDown, RefreshCw } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
+import { useContracts } from '../hooks/useContracts';
+import { ethers } from 'ethers';
 import EmasxIcon from '../assets/EMASX.svg';
 import IdrxIcon from '../assets/IDRX.svg';
+import ContractAddresses from '../abis/contract-address.json';
 
 export default function SwapCard() {
   const { account, connect } = useWallet();
+  const contracts = useContracts();
+  
   // Live price calculation based on: (XAU/USD * USD/IDR) / 31.1035
   // We use PAXG (Paxos Gold) as proxy for XAU and USDT (Tether) as proxy for USD
   const [exchangeRate, setExchangeRate] = useState(2922500); 
@@ -14,15 +19,98 @@ export default function SwapCard() {
   const [isSwapping, setIsSwapping] = useState(false);
   const [lastFocused, setLastFocused] = useState<'in'|'out'>('in');
   
+  // Real Balances
+  const [balances, setBalances] = useState<Record<string, number>>({
+    'IDRX': 0,
+    'EMASX': 0
+  });
+
+  // Fetch Balances
+  useEffect(() => {
+    const fetchBalances = async () => {
+      if (!account || !contracts) return;
+      try {
+        const idrx = await contracts.getMockIDRX();
+        const emasx = await contracts.getEMASX();
+        
+        if (idrx && emasx) {
+          const idrxBal = await idrx.balanceOf(account);
+          const emasxBal = await emasx.balanceOf(account);
+          
+          setBalances({
+            'IDRX': Number(ethers.formatEther(idrxBal)),
+            'EMASX': Number(ethers.formatEther(emasxBal))
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching balances:", err);
+      }
+    };
+    
+    fetchBalances();
+    const interval = setInterval(fetchBalances, 10000); // Refresh every 10s
+    return () => clearInterval(interval);
+  }, [account, contracts]);
+
+  // Handle Swap Execution
+  const handleSwap = async () => {
+    if (!account || !contracts) {
+      connect();
+      return;
+    }
+    
+    setIsSwapping(true);
+    try {
+      const swap = await contracts.getSwap();
+      const idrx = await contracts.getMockIDRX();
+      
+      if (!swap || !idrx) throw new Error("Contracts not loaded");
+      
+      const rawAmountIn = ethers.parseEther(amountIn.replace(/,/g, ''));
+      
+      if (tokenIn.symbol === 'IDRX') {
+        // IDRX -> EMASX
+        // 1. Check Allowance
+        const allowance = await idrx.allowance(account, ContractAddresses.EMASXSwap);
+        if (allowance < rawAmountIn) {
+          console.log("Approving IDRX...");
+          const txApprove = await idrx.approve(ContractAddresses.EMASXSwap, rawAmountIn);
+          await txApprove.wait();
+          console.log("IDRX Approved");
+        }
+        
+        // 2. Swap
+        console.log("Swapping IDRX to EMASX...");
+        const txSwap = await swap.swapIDRXToEMASX(rawAmountIn);
+        await txSwap.wait();
+        console.log("Swap Complete");
+        
+      } else {
+        // EMASX -> IDRX
+        // No approval needed because Swap contract has BURNER_ROLE
+        console.log("Swapping EMASX to IDRX...");
+        const txSwap = await swap.swapEMASXToIDRX(rawAmountIn);
+        await txSwap.wait();
+        console.log("Swap Complete");
+      }
+      
+      // Reset inputs or show success
+      alert("Swap Successful!");
+      setAmountIn('');
+      setAmountOut('');
+      
+    } catch (err: any) {
+      console.error("Swap failed:", err);
+      alert("Swap Failed: " + (err.message || err));
+    } finally {
+      setIsSwapping(false);
+    }
+  };
+
   // Token state
   const [tokenIn, setTokenIn] = useState({ symbol: 'EMASX', color: 'bg-yellow-400', letter: 'E' });
   const [tokenOut, setTokenOut] = useState({ symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' });
 
-  // Mock balances
-  const balances: Record<string, number> = {
-    'IDRX': 150000000,
-    'EMASX': 100
-  };
   const currentBalance = balances[tokenIn.symbol] || 0;
 
   const formatNumber = (num: number) => {
