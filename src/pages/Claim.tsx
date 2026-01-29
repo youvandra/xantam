@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
+import { useContracts } from '../hooks/useContracts';
+import { ethers } from 'ethers';
 import Skeleton from '../components/Skeleton';
 
 interface GoldOption {
@@ -172,11 +174,12 @@ export default function Claim() {
               </button>
             ) : (
               <button 
-                disabled={totalWeight === 0}
+                onClick={handleClaim}
+                disabled={totalWeight === 0 || isClaiming}
                 className="flex-1 md:w-64 bg-primary hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
               >
                 <Package size={20} />
-                Claim {totalWeight > 0 ? `${totalWeight}g` : ''} Gold
+                {isClaiming ? 'Claiming...' : `Claim ${totalWeight > 0 ? `${totalWeight}g` : ''} Gold`}
               </button>
             )}
           </div>

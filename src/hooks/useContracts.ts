@@ -37,7 +37,14 @@ export function useContracts() {
     const getContract = async (name: keyof typeof ContractAddresses, abi: any) => {
       const signer = await getSigner();
       if (!signer) return null;
-      return new ethers.Contract(ContractAddresses[name], abi.abi, signer);
+      
+      const address = ContractAddresses[name];
+      if (!address) {
+        console.error(`Contract address not found for ${name}`);
+        return null;
+      }
+      
+      return new ethers.Contract(address, abi.abi, signer);
     };
 
     return {
