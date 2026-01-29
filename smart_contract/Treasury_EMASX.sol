@@ -14,4 +14,8 @@ contract Treasury is Ownable {
     function withdraw(address to, uint256 amount) external onlyOwner {
         idrx.transfer(to, amount);
     }
+
+    function approve(address spender, uint256 amount) external onlyOwner {
+        idrx.approve(spender, amount);
+    }
 }

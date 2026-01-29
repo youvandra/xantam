@@ -458,8 +458,8 @@
       ]
     },
     "/Users/youvandrafebrial/Documents/trae_projects/xantam/smart_contract/Treasury_EMASX.sol": {
-      "lastModificationDate": 1769649443956,
-      "contentHash": "ed4c73e07ae629b8101037e7d8e36a77",
+      "lastModificationDate": 1769655485037,
+      "contentHash": "74219d65fc5ccd11890e290553855572",
       "sourceName": "smart_contract/Treasury_EMASX.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -494,44 +494,6 @@
       ],
       "artifacts": [
         "Treasury"
-      ]
-    },
-    "/Users/youvandrafebrial/Documents/trae_projects/xantam/smart_contract/Gold_Price_Oracle_Mock.sol": {
-      "lastModificationDate": 1769649458865,
-      "contentHash": "bc83a4cc5f3f6cb73d63d68133c98259",
-      "sourceName": "smart_contract/Gold_Price_Oracle_Mock.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "evmVersion": "paris",
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "MockGoldOracle"
       ]
     },
     "/Users/youvandrafebrial/Documents/trae_projects/xantam/smart_contract/mock_IDRX.sol": {

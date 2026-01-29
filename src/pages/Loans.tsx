@@ -188,7 +188,7 @@ export default function Loans() {
             <div className="bg-gray-50 rounded-xl p-4 hover:ring-1 hover:ring-primary/20 transition-all">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-500 font-medium">Deposit Collateral</span>
-                <span className="text-sm text-gray-500">Balance: 0.00</span>
+                <span className="text-sm text-gray-500">Balance: {Number(userBalance.emasx).toLocaleString('en-US')}</span>
               </div>
               <div className="flex justify-between items-center gap-4">
                 <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm min-w-fit">
@@ -226,7 +226,26 @@ export default function Loans() {
               <div className="flex justify-between items-center mt-2">
                 <div className="flex gap-2">
                   {['0', 'Half', 'Max'].map((label) => (
-                    <button key={label} className="text-xs bg-white border border-gray-200 px-2 py-1 rounded-md text-gray-600 hover:bg-gray-100">
+                    <button 
+                      key={label} 
+                      onClick={() => {
+                        const balance = Number(userBalance.emasx);
+                        let val = '';
+                        if (label === '0') val = '0';
+                        if (label === 'Half') val = (balance / 2).toString();
+                        if (label === 'Max') val = balance.toString();
+                        
+                        setCollateralAmount(val);
+                        // Trigger calculation logic similar to onChange
+                        if (val && Number(goldPrice) > 0) {
+                          const maxBorrow = Number(val) * Number(goldPrice) * 0.60;
+                          setBorrowAmount(Math.floor(maxBorrow).toString());
+                        } else {
+                          setBorrowAmount('');
+                        }
+                      }}
+                      className="text-xs bg-white border border-gray-200 px-2 py-1 rounded-md text-gray-600 hover:bg-gray-100"
+                    >
                       {label}
                     </button>
                   ))}
@@ -249,7 +268,7 @@ export default function Loans() {
                 <input   
                   type="text" 
                   readOnly
-                  value={borrowAmount ? Number(borrowAmount).toLocaleString('id-ID') : ''}
+                  value={borrowAmount ? Number(borrowAmount).toLocaleString('en-US') : ''}
                   className="text-right text-3xl font-bold bg-transparent border-none focus:outline-none w-full text-gray-500 cursor-not-allowed placeholder-gray-300"
                   placeholder="0"
                 />
@@ -270,7 +289,9 @@ export default function Loans() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Liquidation Price</span>
-                <span className="font-medium text-gray-900">-</span>
+                <span className="font-medium text-gray-900">
+                  {liquidationPrice > 0 ? Number(liquidationPrice).toLocaleString('en-US', { maximumFractionDigits: 0 }) : '-'}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Annual Interest</span>

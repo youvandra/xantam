@@ -65,44 +65,59 @@ async function main() {
   console.log("Setting up permissions...");
   
   // Swap contract needs to MINT EMASX (IDRX -> EMASX)
-  await emasx.grantRole(MINTER_ROLE, swapAddress);
+  let tx = await emasx.grantRole(MINTER_ROLE, swapAddress);
+  await tx.wait();
   console.log("Granted MINTER_ROLE to Swap");
 
   // Swap contract needs to BURN EMASX (EMASX -> IDRX)
-  await emasx.grantRole(BURNER_ROLE, swapAddress);
+  tx = await emasx.grantRole(BURNER_ROLE, swapAddress);
+  await tx.wait();
   console.log("Granted BURNER_ROLE to Swap");
 
   // Lending contract needs to BURN EMASX (Liquidate)
   // Also Lending contract transfers EMASX, but doesn't mint.
-  await emasx.grantRole(BURNER_ROLE, lendingAddress);
+  tx = await emasx.grantRole(BURNER_ROLE, lendingAddress);
+  await tx.wait();
   console.log("Granted BURNER_ROLE to Lending");
 
   // Claim contract needs to BURN EMASX (Claim physical gold)
-  await emasx.grantRole(BURNER_ROLE, claimAddress);
+  tx = await emasx.grantRole(BURNER_ROLE, claimAddress);
+  await tx.wait();
   console.log("Granted BURNER_ROLE to Claim");
 
   // 9. Fund Treasury with some IDRX (for selling gold/swapping EMASX to IDRX)
   // Deployer has 1B IDRX from MockIDRX constructor
   // Transfer 100M to Treasury
   const fundAmount = hre.ethers.parseUnits("100000000", 18);
-  await idrx.transfer(treasuryAddress, fundAmount);
+  tx = await idrx.transfer(treasuryAddress, fundAmount);
+  await tx.wait();
   console.log("Funded Treasury with 100M IDRX");
+
+  // Allow Treasury to spend IDRX (approve Swap contract)
+  console.log("Approving Swap to spend Treasury IDRX...");
+  tx = await treasury.approve(swapAddress, hre.ethers.MaxUint256);
+  await tx.wait();
+  console.log("Treasury approved Swap for IDRX");
 
   // 10. Fund Deployer with some EMASX (optional, for testing)
   // Deployer is admin, can grant itself minter role if needed, but we can use Swap to get EMASX.
   // Or simply grant deployer MINTER_ROLE temporarily.
-  await emasx.grantRole(MINTER_ROLE, deployer.address);
+  tx = await emasx.grantRole(MINTER_ROLE, deployer.address);
+  await tx.wait();
 
   if (hre.network.name === "base-sepolia") {
     // Mint requested amounts for Base Sepolia
-    await idrx.mint(deployer.address, hre.ethers.parseUnits("40000000", 18));
+    tx = await idrx.mint(deployer.address, hre.ethers.parseUnits("40000000", 18));
+    await tx.wait();
     console.log("Minted 40,000,000 Mock IDRX to deployer (Base Sepolia)");
     
-    await emasx.mint(deployer.address, hre.ethers.parseUnits("400", 18));
+    tx = await emasx.mint(deployer.address, hre.ethers.parseUnits("400", 18));
+    await tx.wait();
     console.log("Minted 400 EMASX to deployer (Base Sepolia)");
   } else {
     // Default/Local behavior
-    await emasx.mint(deployer.address, hre.ethers.parseUnits("1000", 18));
+    tx = await emasx.mint(deployer.address, hre.ethers.parseUnits("1000", 18));
+    await tx.wait();
     console.log("Minted 1000 EMASX to deployer");
   }
 
