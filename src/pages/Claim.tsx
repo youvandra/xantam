@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Package, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Package, Minus, Plus } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 import { useContracts } from '../hooks/useContracts';
 import { ethers } from 'ethers';

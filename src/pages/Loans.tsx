@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ShieldCheck, TrendingUp, Info, HandCoins } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 import { useContracts } from '../hooks/useContracts';
 import ContractAddresses from '../abis/contract-address.json';
 import { ethers } from 'ethers';
 import Skeleton from '../components/Skeleton';
-import Notification, { type NotificationItem } from '../components/Notification';
 import EmasxIcon from '../assets/EMASX.svg';
 import IdrxIcon from '../assets/IDRX.svg';
 
@@ -16,7 +15,6 @@ export default function Loans() {
   const [borrowAmount, setBorrowAmount] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isTransacting, setIsTransacting] = useState(false);
-  const [notification, setNotification] = useState<NotificationItem | null>(null);
   
   const [userBalance, setUserBalance] = useState({ emasx: '0', idrx: '0' });
   const [userPosition, setUserPosition] = useState({ collateral: '0', debt: '0' });
@@ -72,10 +70,6 @@ export default function Loans() {
         }
       } catch (err) {
         console.error("Error fetching loan data:", err);
-        setNotification({
-          type: 'error',
-          message: 'Failed to load market data. Please check your connection.'
-        });
       } finally {
         setIsLoading(false);
       }
@@ -209,13 +203,6 @@ export default function Loans() {
                         setBorrowAmount(Math.floor(maxBorrow).toString());
                       } else {
                         setBorrowAmount('');
-                      }
-
-                      if (Number(goldPrice) === 0) {
-                        setNotification({
-                          type: 'info',
-                          message: 'Gold price is loading or unavailable. Please wait...'
-                        });
                       }
                     }
                   }}

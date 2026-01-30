@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo } from 'react';
+import { useEffect, useRef, memo } from 'react';
 
 function GoldChart() {
   const container = useRef<HTMLDivElement>(null);

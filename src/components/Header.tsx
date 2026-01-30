@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Wallet, ChevronDown, Globe, Check, AlertCircle, LogOut } from 'lucide-react';
+import { Wallet, ChevronDown, Check, AlertCircle, LogOut } from 'lucide-react';
 import { useWallet, BASE_MAINNET_ID, BASE_TESTNET_ID } from '../hooks/useWallet';
 
 export default function Header() {

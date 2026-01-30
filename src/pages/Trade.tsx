@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import SwapCard from '../components/SwapCard';
 import GoldChart from '../components/GoldChart';
 import Skeleton from '../components/Skeleton';

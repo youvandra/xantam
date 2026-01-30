@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowUpDown, Info, Settings, ChevronDown, RefreshCw, ArrowLeftRight, Repeat } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowUpDown, RefreshCw, Repeat } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 import { useContracts } from '../hooks/useContracts';
 import { ethers } from 'ethers';
@@ -231,38 +231,8 @@ export default function SwapCard() {
 
   // Calculate display rate based on direction
   // exchangeRate is Price of 1 EMASX in IDRX (e.g. 2,922,500)
-  // If showing Price per 1 EMASX: rate is exchangeRate
-  // If showing Price per 1 IDRX: rate is 1 / exchangeRate
-  const isEmasxToIdrx = tokenIn.symbol === 'EMASX';
-  const displayRate = isEmasxToIdrx ? exchangeRate : (1 / exchangeRate);
   
-  // Format the rate appropriately (handle small numbers)
-  const formatRate = (rate: number) => {
-    if (rate < 1) {
-      return rate.toLocaleString('en-US', { maximumFractionDigits: 10 });
-    }
-    return formatNumber(rate);
-  };
-  
-  // Determine which token is the "Base" for the price display
-  // By default we show Price per 1 [TokenIn] = X [TokenOut]
-  // BUT the UI currently shows Price per 1 [TokenOut] = X [TokenIn]
-  // Let's stick to the UI's structure: Price per 1 [TokenOut]
-  const priceBaseToken = tokenOut;
-  const priceQuoteToken = tokenIn;
-  // If TokenOut is IDRX (Selling EMASX): Base is IDRX. Rate should be 1/Rate (EMASX per IDRX).
-  // If TokenOut is EMASX (Buying EMASX): Base is EMASX. Rate should be Rate (IDRX per EMASX).
-  // Wait, if TokenOut is IDRX, exchangeRate is 2.9M. 
-  // If I want "Price per 1 IDRX", it should be small.
-  // If I want "Price per 1 EMASX", it should be large.
-  
-  // Let's use a simpler logic: Always show Price per 1 EMASX if possible, or toggle.
-  // But to fix the user's issue "still price per EMASX", I should probably make sure the text matches the number.
-  
-  // Actually, standard practice:
-  // Show 1 EMASX = X IDRX (because EMASX is the asset).
   // Let's force the display to be "Price per 1 EMASX" regardless of direction.
-  const showEmasxPrice = true;
   const finalDisplayRate = exchangeRate; 
   const finalBaseToken = { symbol: 'EMASX', color: 'bg-yellow-400', letter: 'E' };
   const finalQuoteToken = { symbol: 'IDRX', color: 'bg-blue-500', letter: 'I' };

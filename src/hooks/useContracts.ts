@@ -8,7 +8,6 @@ import EMASXSwap_ABI from '../abis/EMASXSwap.json';
 import GoldClaimRegistry_ABI from '../abis/GoldClaimRegistry.json';
 import GoldPriceOracle_ABI from '../abis/GoldPriceOracle.json';
 import MockIDRX_ABI from '../abis/MockIDRX.json';
-import Treasury_ABI from '../abis/Treasury.json';
 import ContractAddresses from '../abis/contract-address.json';
 
 export function useContracts() {
