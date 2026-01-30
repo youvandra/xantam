@@ -12,7 +12,7 @@ export default function Header() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const networks = [
-    { name: 'Base Mainnet', id: BASE_MAINNET_ID },
+    { name: 'Base Mainnet', id: BASE_MAINNET_ID, disabled: true },
     { name: 'Base Sepolia Testnet', id: BASE_TESTNET_ID },
   ];
 
@@ -91,22 +91,25 @@ export default function Header() {
             ) : (
               <div className={`w-2 h-2 rounded-full ${chainId === BASE_MAINNET_ID ? 'bg-blue-500' : chainId === BASE_TESTNET_ID ? 'bg-yellow-500' : 'bg-gray-400'}`}></div>
             )}
-            <span>{account ? (isWrongNetwork ? 'Wrong Network' : currentNetworkName) : 'Base Mainnet'}</span>
+            <span>{account ? (isWrongNetwork ? 'Wrong Network' : currentNetworkName) : 'Base Sepolia Testnet'}</span>
             <ChevronDown size={16} className={`text-gray-500 transition-transform ${isNetworkOpen ? 'rotate-180' : ''}`} />
           </div>
 
           {isNetworkOpen && (
-            <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 overflow-hidden">
+            <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-1 overflow-hidden">
               {networks.map((network) => (
                 <button
                   key={network.id}
-                  onClick={() => handleNetworkSelect(network.id)}
-                  className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 flex items-center justify-between group"
+                  onClick={() => !network.disabled && handleNetworkSelect(network.id)}
+                  disabled={network.disabled}
+                  className={`w-full text-left px-4 py-2.5 text-sm flex items-center justify-between group ${
+                    network.disabled ? 'opacity-50 cursor-not-allowed bg-gray-50' : 'hover:bg-gray-50'
+                  }`}
                 >
                   <div className="flex items-center gap-2">
                     <div className={`w-2 h-2 rounded-full ${network.id === BASE_MAINNET_ID ? 'bg-blue-500' : 'bg-yellow-500'}`}></div>
                     <span className={`font-medium ${chainId === network.id ? 'text-gray-900' : 'text-gray-600'}`}>
-                      {network.name}
+                      {network.name} {network.disabled && <span className="text-xs text-gray-500 font-normal ml-1">(Soon)</span>}
                     </span>
                   </div>
                   {chainId === network.id && <Check size={14} className="text-primary" />}
