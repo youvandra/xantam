@@ -13,7 +13,7 @@ export default function Header() {
 
   const networks = [
     { name: 'Base Mainnet', id: BASE_MAINNET_ID },
-    { name: 'Base Testnet', id: BASE_TESTNET_ID },
+    { name: 'Base Sepolia Testnet', id: BASE_TESTNET_ID },
   ];
 
   const currentNetworkName = networks.find(n => n.id === chainId)?.name || 'Wrong Network';
