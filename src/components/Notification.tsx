@@ -33,7 +33,7 @@ export default function Notification({ type, message, onClose }: NotificationPro
   };
 
   return (
-    <div className={`fixed top-24 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg animate-in slide-in-from-right fade-in duration-300 ${styles[type]}`}>
+    <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg animate-in slide-in-from-right fade-in duration-300 ${styles[type]}`}>
       {icons[type]}
       <p className="font-medium text-sm">{message}</p>
       <button onClick={onClose} className="p-1 hover:bg-black/5 rounded-full transition-colors">

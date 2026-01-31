@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastProvider } from './context/ToastContext';
 import Layout from './components/Layout';
 import Trade from './pages/Trade';
 import Loans from './pages/Loans';
@@ -7,15 +8,17 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Trade />} />
-          <Route path="/loans" element={<Loans />} />
-          <Route path="/claim" element={<Claim />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <ToastProvider>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Trade />} />
+            <Route path="/loans" element={<Loans />} />
+            <Route path="/claim" element={<Claim />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </ToastProvider>
   );
 }
 

@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Package, Minus, Plus } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 import { useContracts } from '../hooks/useContracts';
+import { useToast } from '../context/ToastContext';
 import { ethers } from 'ethers';
-import Skeleton from '../components/Skeleton';
 import Modal from '../components/Modal';
+import Skeleton from '../components/Skeleton';
 
 interface GoldOption {
   weight: number;
@@ -24,6 +25,7 @@ const GOLD_OPTIONS: GoldOption[] = [
 export default function Claim() {
   const { account, connect } = useWallet();
   const contracts = useContracts();
+  const { showToast } = useToast();
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isClaiming, setIsClaiming] = useState(false);
@@ -96,14 +98,14 @@ export default function Claim() {
       // Here you would typically submit the shipping details to a backend
       console.log("Shipping Details:", shippingDetails);
 
-      alert(`Successfully claimed ${totalWeight}g of physical gold! Shipping to: ${shippingDetails.address}`);
+      showToast('success', `Successfully claimed ${totalWeight}g of physical gold! Shipping to: ${shippingDetails.address}`);
       setQuantities({});
       setShippingDetails({ fullName: '', address: '', city: '', postalCode: '', phone: '' });
       setIsModalOpen(false);
 
     } catch (err: any) {
       console.error("Claim failed:", err);
-      alert("Claim Failed: " + (err.message || err));
+      showToast('error', "Claim Failed: " + (err.reason || err.message || "Unknown error"));
     } finally {
       setIsClaiming(false);
     }

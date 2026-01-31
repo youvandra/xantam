@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowUpDown, RefreshCw, Repeat } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 import { useContracts } from '../hooks/useContracts';
+import { useToast } from '../context/ToastContext';
 import { ethers } from 'ethers';
 import EmasxIcon from '../assets/EMASX.svg';
 import IdrxIcon from '../assets/IDRX.svg';
@@ -10,6 +11,7 @@ import ContractAddresses from '../abis/contract-address.json';
 export default function SwapCard() {
   const { account, connect } = useWallet();
   const contracts = useContracts();
+  const { showToast } = useToast();
   
   // Live price calculation based on: (XAU/USD * USD/IDR) / 31.1035
   // We use PAXG (Paxos Gold) as proxy for XAU and USDT (Tether) as proxy for USD
@@ -95,13 +97,13 @@ export default function SwapCard() {
       }
       
       // Reset inputs or show success
-      alert("Swap Successful!");
+      showToast('success', "Swap Successful!");
       setAmountIn('');
       setAmountOut('');
       
     } catch (err: any) {
       console.error("Swap failed:", err);
-      alert("Swap Failed: " + (err.message || err));
+      showToast('error', "Swap Failed: " + (err.reason || err.message || "Unknown error"));
     } finally {
       setIsSwapping(false);
     }
