@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShieldCheck, TrendingUp, HandCoins, PlusCircle, X } from 'lucide-react';
+import { ShieldCheck, TrendingUp, HandCoins } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 import { useContracts } from '../hooks/useContracts';
 import { useToast } from '../context/ToastContext';
@@ -38,10 +38,7 @@ export default function Loans() {
     treasuryBalance: '0',
     lendingLiquidity: '0'
   });
-  const [treasuryOwner, setTreasuryOwner] = useState('');
-  const [isAddLiquidityOpen, setIsAddLiquidityOpen] = useState(false);
-  const [liquidityAmount, setLiquidityAmount] = useState('');
-  const [liquiditySource, setLiquiditySource] = useState<'wallet' | 'treasury'>('wallet');
+
 
   // Fetch live price consistent with Trade page
   useEffect(() => {
@@ -101,12 +98,7 @@ export default function Loans() {
           });
         }
 
-        // Get Treasury Owner
-        const treasury = await contracts.getTreasury();
-        if (treasury) {
-           const owner = await treasury.owner();
-           setTreasuryOwner(owner);
-        }
+
 
         // Fetch LTV from contract
         const lending = await contracts.getLending();
@@ -341,55 +333,7 @@ export default function Loans() {
     }
   };
 
-  const handleAddLiquidity = async () => {
-    if (!contracts || !account) return;
-    
-    if (!liquidityAmount || Number(liquidityAmount) <= 0) {
-      showToast('error', "Enter a valid amount");
-      return;
-    }
 
-    setIsTransacting(true);
-    try {
-      const amountWei = ethers.parseEther(liquidityAmount);
-      
-      if (liquiditySource === 'wallet') {
-          const idrx = await contracts.getMockIDRX();
-          if (!idrx) throw new Error("IDRX contract not found");
-          
-          // Direct transfer to Lending Contract
-          const tx = await idrx.transfer(ContractAddresses.EMASXLending, amountWei);
-          await tx.wait();
-      } else {
-          // Treasury Withdrawal to Lending Contract
-          const treasury = await contracts.getTreasury();
-          if (!treasury) throw new Error("Treasury contract not found");
-          
-          const tx = await treasury.withdraw(ContractAddresses.EMASXLending, amountWei);
-          await tx.wait();
-      }
-      
-      showToast('success', "Liquidity Added Successfully!");
-      setLiquidityAmount('');
-      setIsAddLiquidityOpen(false);
-      
-      // Refresh stats immediately
-      const idrx = await contracts.getMockIDRX();
-      if (idrx) {
-        const liq = await idrx.balanceOf(ContractAddresses.EMASXLending);
-        setMarketStats(prev => ({
-          ...prev,
-          lendingLiquidity: ethers.formatEther(liq)
-        }));
-      }
-
-    } catch (err: any) {
-       console.error("Add Liquidity failed:", err);
-       showToast('error', "Failed: " + (err.reason || err.message || "Unknown error"));
-    } finally {
-       setIsTransacting(false);
-    }
-  };
 
   // Calculate LTV
   // For Borrow: Current Position + New Collateral & Debt
@@ -463,16 +407,16 @@ export default function Loans() {
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center relative group">
           <p className="text-gray-500 text-xs mb-1 uppercase tracking-wider">Pool Liquidity</p>
-          <p className="text-xl font-bold text-gray-900">
-            {formatCompactNumber(Number(marketStats.lendingLiquidity))} IDRX
-          </p>
-          <button 
-             onClick={() => setIsAddLiquidityOpen(true)}
-             className="absolute top-2 right-2 p-1 text-gray-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
-             title="Add Liquidity"
-          >
-             <PlusCircle size={16} />
-          </button>
+          {Number(marketStats.lendingLiquidity) > 0 ? (
+            <p className="text-xl font-bold text-gray-900">
+              {formatCompactNumber(Number(marketStats.lendingLiquidity))} IDRX
+            </p>
+          ) : (
+            <div className="flex justify-center mt-1">
+               <Skeleton className="h-7 w-24" />
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -557,9 +501,13 @@ export default function Loans() {
                         </button>
                       ))}
                     </div>
-                    <span className="text-sm text-gray-400">
-                      ~ {((Number(depositAmount) || 0) * (Number(goldPrice) || 0)).toLocaleString('id-ID', { maximumFractionDigits: 0 })} IDRX
-                    </span>
+                    {Number(goldPrice) > 0 ? (
+                      <span className="text-sm text-gray-400">
+                        ~ {((Number(depositAmount) || 0) * (Number(goldPrice) || 0)).toLocaleString('id-ID', { maximumFractionDigits: 0 })} IDRX
+                      </span>
+                    ) : (
+                      <Skeleton className="h-5 w-24" />
+                    )}
                   </div>
                 </div>
             )}
@@ -568,7 +516,14 @@ export default function Loans() {
                 <div className="bg-gray-50 rounded-xl p-4 hover:ring-1 hover:ring-primary/20 transition-all">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm text-gray-500 font-medium">Borrow Amount</span>
-                    <span className="text-sm text-gray-500">Available: {formatCompactNumber(availableBorrow)} IDRX</span>
+                    {Number(goldPrice) > 0 ? (
+                      <span className="text-sm text-gray-500">Available: {formatCompactNumber(availableBorrow)} IDRX</span>
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm text-gray-500">Available:</span>
+                        <Skeleton className="h-4 w-16" />
+                      </div>
+                    )}
                   </div>
                   <div className="flex justify-between items-center gap-4">
                     <div className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-full shadow-sm min-w-fit">
@@ -711,9 +666,16 @@ export default function Loans() {
         <div className="grid grid-cols-2 gap-4">
            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col justify-center text-center">
               <span className="text-gray-400 text-xs uppercase tracking-wider mb-1">Projected LTV</span>
-              <span className={`font-bold text-lg ${ltv > Number(maxLtv) ? 'text-red-500' : 'text-gray-900'}`}>
-                  {ltv > 0 ? ltv.toFixed(2) : '0.00'}% <span className="text-gray-300 text-sm font-normal">/ {maxLtv}%</span>
-              </span>
+              {Number(goldPrice) > 0 ? (
+                <span className={`font-bold text-lg ${ltv > Number(maxLtv) ? 'text-red-500' : 'text-gray-900'}`}>
+                    {ltv > 0 ? ltv.toFixed(2) : '0.00'}% <span className="text-gray-300 text-sm font-normal">/ {maxLtv}%</span>
+                </span>
+              ) : (
+                <div className="flex justify-center items-end gap-1 h-[28px]">
+                  <Skeleton className="h-7 w-16" />
+                  <span className="text-gray-300 text-sm font-normal mb-0.5">/ {maxLtv}%</span>
+                </div>
+              )}
            </div>
            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col justify-center text-center">
               <span className="text-gray-400 text-xs uppercase tracking-wider mb-1">Liquidation Price</span>
@@ -723,95 +685,7 @@ export default function Loans() {
            </div>
         </div>
 
-      {/* Add Liquidity Modal */}
-      {isAddLiquidityOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Add Pool Liquidity</h3>
-              <button 
-                onClick={() => setIsAddLiquidityOpen(false)}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <X size={20} className="text-gray-500" />
-              </button>
-            </div>
 
-            <div className="space-y-4">
-              <div className="flex bg-gray-100 p-1 rounded-lg">
-                <button
-                  onClick={() => setLiquiditySource('wallet')}
-                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
-                    liquiditySource === 'wallet' 
-                      ? 'bg-white text-gray-900 shadow-sm' 
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  From Wallet
-                </button>
-                {account && treasuryOwner && account.toLowerCase() === treasuryOwner.toLowerCase() && (
-                  <button
-                    onClick={() => setLiquiditySource('treasury')}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
-                      liquiditySource === 'treasury' 
-                        ? 'bg-white text-gray-900 shadow-sm' 
-                        : 'text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    From Treasury
-                  </button>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Amount (IDRX)</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={liquidityAmount}
-                    onChange={(e) => {
-                       const val = e.target.value;
-                       if (val === '' || /^\d*\.?\d*$/.test(val)) setLiquidityAmount(val);
-                    }}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-mono"
-                    placeholder="0.00"
-                  />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-bold">
-                    IDRX
-                  </div>
-                </div>
-                {liquiditySource === 'wallet' && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Your Balance: {Number(userBalance.idrx).toLocaleString()} IDRX
-                  </p>
-                )}
-                {liquiditySource === 'treasury' && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Treasury Balance: {Number(marketStats.treasuryBalance).toLocaleString()} IDRX
-                  </p>
-                )}
-              </div>
-
-              <button
-                onClick={handleAddLiquidity}
-                disabled={isTransacting || !liquidityAmount || Number(liquidityAmount) <= 0}
-                className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex justify-center items-center gap-2 mt-2"
-              >
-                {isTransacting ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    Add Liquidity
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Safety Info Footer */}
         <div className="text-center pb-8">
