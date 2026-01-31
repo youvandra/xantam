@@ -53,6 +53,7 @@ export function useContracts() {
       getSwap: () => getContract('EMASXSwap', EMASXSwap_ABI),
       getLending: () => getContract('EMASXLending', EMASXLending_ABI),
       getClaim: () => getContract('GoldClaimRegistry', GoldClaimRegistry_ABI),
+      getTreasury: () => getContract('Treasury', Treasury_ABI),
       provider
     };
   }, [account]);
