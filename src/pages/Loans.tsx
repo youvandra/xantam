@@ -460,6 +460,13 @@ export default function Loans() {
           <p className="text-xl font-bold text-gray-900">
             {formatCompactNumber(Number(marketStats.lendingLiquidity))} IDRX
           </p>
+          <button 
+             onClick={() => setIsAddLiquidityOpen(true)}
+             className="absolute top-2 right-2 p-1 text-gray-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+             title="Add Liquidity"
+          >
+             <PlusCircle size={16} />
+          </button>
         </div>
       </div>
 
