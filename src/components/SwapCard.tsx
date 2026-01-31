@@ -167,11 +167,14 @@ export default function SwapCard() {
   }, [exchangeRate, tokenIn.symbol]);
 
   const handleAmountInChange = (val: string) => {
-    if (val === '' || /^\d*\.?\d*$/.test(val)) {
+    // Allow digits, commas, and one decimal point
+    if (val === '' || /^[\d,]*\.?\d*$/.test(val)) {
       setAmountIn(val);
       setLastFocused('in');
-      if (val && !isNaN(Number(val))) {
-        const rawVal = Number(val.replace(/,/g, ''));
+      
+      const cleanVal = val.replace(/,/g, '');
+      if (val && !isNaN(Number(cleanVal))) {
+        const rawVal = Number(cleanVal);
         // If selling IDRX for EMASX: amountIn (IDRX) / rate = amountOut (EMASX)
         // If selling EMASX for IDRX: amountIn (EMASX) * rate = amountOut (IDRX)
         const calculated = tokenIn.symbol === 'IDRX' 
@@ -185,11 +188,13 @@ export default function SwapCard() {
   };
 
   const handleAmountOutChange = (val: string) => {
-    if (val === '' || /^\d*\.?\d*$/.test(val)) {
+    if (val === '' || /^[\d,]*\.?\d*$/.test(val)) {
       setAmountOut(val);
       setLastFocused('out');
-      if (val && !isNaN(Number(val))) {
-        const rawVal = Number(val.replace(/,/g, ''));
+      
+      const cleanVal = val.replace(/,/g, '');
+      if (val && !isNaN(Number(cleanVal))) {
+        const rawVal = Number(cleanVal);
         // If buying EMASX with IDRX: amountOut (EMASX) * rate = amountIn (IDRX)
         // If buying IDRX with EMASX: amountOut (IDRX) / rate = amountIn (EMASX)
         const calculated = tokenIn.symbol === 'IDRX'

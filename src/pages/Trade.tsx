@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import SwapCard from '../components/SwapCard';
 import GoldChart from '../components/GoldChart';
 import Skeleton from '../components/Skeleton';
-import RecentTrades from '../components/RecentTrades';
 
 export default function Trade() {
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +23,6 @@ export default function Trade() {
         <div className="lg:col-span-4">
           <div className="flex flex-col gap-4">
             <Skeleton className="h-[400px] w-full rounded-2xl" />
-            <Skeleton className="h-[200px] w-full rounded-2xl" />
           </div>
         </div>
       </div>
@@ -38,9 +36,6 @@ export default function Trade() {
         <div className="w-full h-[600px]">
            <GoldChart />
         </div>
-        
-        {/* Market Activity */}
-        <RecentTrades />
       </div>
       
       <div className="lg:col-span-4">

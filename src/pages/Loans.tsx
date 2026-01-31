@@ -451,9 +451,15 @@ export default function Loans() {
       <div className="grid grid-cols-2 gap-4 mb-8">
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
           <p className="text-gray-500 text-xs mb-1 uppercase tracking-wider">Total Value Locked</p>
-          <p className="text-xl font-bold text-gray-900">
-            {formatCompactNumber(Number(marketStats.tvl) * Number(goldPrice))} IDRX
-          </p>
+          {Number(goldPrice) > 0 ? (
+            <p className="text-xl font-bold text-gray-900">
+              {formatCompactNumber(Number(marketStats.tvl) * Number(goldPrice))} IDRX
+            </p>
+          ) : (
+            <div className="flex justify-center mt-1">
+               <Skeleton className="h-7 w-24" />
+            </div>
+          )}
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center relative group">
           <p className="text-gray-500 text-xs mb-1 uppercase tracking-wider">Pool Liquidity</p>
@@ -473,6 +479,22 @@ export default function Loans() {
       {/* Main Action Section */}
       <div className="max-w-xl mx-auto space-y-6">
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          
+          {/* Gold Price Display */}
+          <div className="text-center mb-6 pb-6 border-b border-gray-100">
+            <p className="text-sm text-gray-500 mb-1 font-medium uppercase tracking-wider">Gold Price</p>
+            {Number(goldPrice) > 0 ? (
+              <p className="text-3xl font-bold text-gray-900">
+                {Number(goldPrice).toLocaleString('id-ID')} <span className="text-lg text-gray-400 font-medium">IDRX/g</span>
+              </p>
+            ) : (
+              <div className="flex justify-center items-end gap-2 h-[36px]">
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="h-6 w-16" />
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center justify-center gap-2 mb-8 overflow-x-auto no-scrollbar">
              {['deposit', 'borrow', 'repay', 'withdraw'].map((tab) => (
                <button
@@ -576,7 +598,7 @@ export default function Loans() {
                       </button>
                     </div>
                     <span className="text-sm text-gray-400">
-                      Price: {Number(goldPrice).toLocaleString('id-ID')} IDRX / 1 EMASX
+                      Price: {Number(goldPrice) > 0 ? Number(goldPrice).toLocaleString('id-ID') : '...'} IDRX / 1 EMASX
                     </span>
                   </div>
                 </div>
